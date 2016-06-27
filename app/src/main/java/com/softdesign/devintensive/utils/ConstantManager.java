@@ -1,7 +1,7 @@
 package com.softdesign.devintensive.utils;
 
 /**
- * Created by Alexey on 23.06.2016.
+ * Класс для хранения констант
  */
 public interface ConstantManager {
     String TAG_PREFIX = "DEV ";
