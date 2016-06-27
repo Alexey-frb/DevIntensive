@@ -1,6 +1,8 @@
 package com.softdesign.devintensive.ui.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.softdesign.devintensive.R;
@@ -8,6 +10,7 @@ import com.softdesign.devintensive.utils.ConstantManager;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
+    private CoordinatorLayout mCoordinatorLayout;
 
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
@@ -27,6 +30,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate");
+
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_container);
 
         if (savedInstanceState == null) {
             // активити запускается впервые
@@ -103,4 +108,9 @@ public class MainActivity extends BaseActivity {
         super.onRestart();
         Log.d(TAG, "onRestart");
     }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
 }
