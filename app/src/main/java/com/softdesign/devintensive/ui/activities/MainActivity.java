@@ -1,15 +1,13 @@
 package com.softdesign.devintensive.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.utils.ConstantManager;
 
-public class MainActivity extends AppCompatActivity {
-
-    public static final String TAG = ConstantManager.TAG_PREFIX + "Main Activity";
+public class MainActivity extends BaseActivity {
+    public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
 
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
