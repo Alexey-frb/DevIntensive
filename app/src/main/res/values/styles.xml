@@ -24,7 +24,7 @@
         <item name="android:layout_marginRight">@dimen/spacing_medium_32</item>
     </style>
 
-    <style name="textUserInfo">
+    <style name="text_user_info">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:enabled">false</item>
@@ -35,22 +35,22 @@
         <item name="android:textSize">@dimen/font_normal_14</item>
     </style>
 
-    <style name="textStatsInfo">
+    <style name="text_stats_info">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
-    <style name="textStatsInfo.hint">
+    <style name="text_stats_info.hint">
         <item name="android:textSize">@dimen/font_normal_14</item>
     </style>
 
-    <style name="textStatsInfo.value">
+    <style name="text_stats_info.value">
         <item name="android:textSize">@dimen/font_medium_24</item>
     </style>
 
-    <style name="layoutUserInfo">
+    <style name="layout_user_info">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/spacing_small_8</item>
@@ -58,7 +58,7 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="layoutFieldUserInfo">
+    <style name="layout_field_user_info">
         <item name="android:layout_width">@dimen/size_smaller_0dp</item>
         <item name="android:layout_height">@dimen/size_large_72</item>
         <item name="android:layout_marginLeft">@dimen/spacing_medium_32</item>
@@ -68,7 +68,7 @@
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="layoutFieldStatsInfo">
+    <style name="layout_field_stats_info">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/size_medium_56</item>
         <item name="android:layout_marginBottom">@dimen/spacing_28dp</item>
@@ -78,7 +78,7 @@
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="lineVertical">
+    <style name="line_vertical">
         <item name="android:layout_width">@dimen/line_size</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_marginBottom">@dimen/spacing_medial_24</item>
@@ -86,7 +86,7 @@
         <item name="android:background">@color/gray_light</item>
     </style>
 
-    <style name="lineHorizontal">
+    <style name="line_horizontal">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/line_size</item>
         <item name="android:layout_marginLeft">@dimen/spacing_largest_72</item>

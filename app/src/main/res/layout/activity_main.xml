@@ -22,58 +22,58 @@
             >
             <!-- Рейтинг -->
             <LinearLayout
-                style="@style/layoutFieldStatsInfo"
+                style="@style/layout_field_stats_info"
                 >
 
                 <TextView
                     android:id="@+id/info_raiting"
-                    style="@style/textStatsInfo.value"
+                    style="@style/text_stats_info.value"
                     android:text="5"
                     />
 
                 <TextView
-                    style="@style/textStatsInfo.hint"
+                    style="@style/text_stats_info.hint"
                     android:text="@string/raiting"
                     />
             </LinearLayout>
 
             <View
-                style="@style/lineVertical"
+                style="@style/line_vertical"
                 />
             <!-- Написано строк кода -->
             <LinearLayout
-                style="@style/layoutFieldStatsInfo"
+                style="@style/layout_field_stats_info"
                 android:layout_weight="2"
                 >
 
                 <TextView
                     android:id="@+id/info_rows_code"
-                    style="@style/textStatsInfo.value"
+                    style="@style/text_stats_info.value"
                     android:text="5"
                     />
 
                 <TextView
-                    style="@style/textStatsInfo.hint"
+                    style="@style/text_stats_info.hint"
                     android:text="@string/rows_code"
                     />
             </LinearLayout>
 
             <View
-                style="@style/lineVertical"
+                style="@style/line_vertical"
                 />
             <!-- Проектов -->
             <LinearLayout
-                style="@style/layoutFieldStatsInfo"
+                style="@style/layout_field_stats_info"
                 >
 
                 <TextView
                     android:id="@+id/info_project"
-                    style="@style/textStatsInfo.value"
+                    style="@style/text_stats_info.value"
                     android:text="5"
                     />
 
                 <TextView
-                    style="@style/textStatsInfo.hint"
+                    style="@style/text_stats_info.hint"
                     android:text="@string/project"
                     />
             </LinearLayout>
@@ -82,7 +82,7 @@
 
         <!-- Мобильный -->
         <LinearLayout
-            style="@style/layoutUserInfo"
+            style="@style/layout_user_info"
             >
 
             <ImageView
@@ -91,7 +91,7 @@
                 />
 
             <LinearLayout
-                style="@style/layoutFieldUserInfo"
+                style="@style/layout_field_user_info"
                 >
 
                 <android.support.design.widget.TextInputLayout
@@ -101,7 +101,7 @@
 
                     <EditText
                         android:id="@+id/phone_et"
-                        style="@style/textUserInfo"
+                        style="@style/text_user_info"
                         android:hint="@string/phone_hint"
                         android:inputType="phone"
                         android:text="+7 (927) 672-49-59"
@@ -116,11 +116,11 @@
         </LinearLayout>
 
         <View
-            style="@style/lineHorizontal"
+            style="@style/line_horizontal"
             />
         <!-- E-mail -->
         <LinearLayout
-            style="@style/layoutUserInfo"
+            style="@style/layout_user_info"
             >
 
             <ImageView
@@ -129,7 +129,7 @@
                 />
 
             <LinearLayout
-                style="@style/layoutFieldUserInfo"
+                style="@style/layout_field_user_info"
                 >
 
                 <android.support.design.widget.TextInputLayout
@@ -139,7 +139,7 @@
 
                     <EditText
                         android:id="@+id/email_et"
-                        style="@style/textUserInfo"
+                        style="@style/text_user_info"
                         android:hint="@string/email_hint"
                         android:inputType="textEmailAddress"
                         android:text="alexey.frb@gmail.com"
@@ -154,11 +154,11 @@
         </LinearLayout>
 
         <View
-            style="@style/lineHorizontal"
+            style="@style/line_horizontal"
             />
         <!-- Профиль в VK -->
         <LinearLayout
-            style="@style/layoutUserInfo"
+            style="@style/layout_user_info"
             >
 
             <ImageView
@@ -167,7 +167,7 @@
                 />
 
             <LinearLayout
-                style="@style/layoutFieldUserInfo"
+                style="@style/layout_field_user_info"
                 >
 
                 <android.support.design.widget.TextInputLayout
@@ -177,7 +177,7 @@
 
                     <EditText
                         android:id="@+id/vk_et"
-                        style="@style/textUserInfo"
+                        style="@style/text_user_info"
                         android:hint="@string/vk_hint"
                         android:inputType="textUri"
                         android:text="vk.com/alx_tt"
@@ -192,11 +192,11 @@
         </LinearLayout>
 
         <View
-            style="@style/lineHorizontal"
+            style="@style/line_horizontal"
             />
         <!-- Репозиторий -->
         <LinearLayout
-            style="@style/layoutUserInfo"
+            style="@style/layout_user_info"
             >
 
             <ImageView
@@ -205,7 +205,7 @@
                 />
 
             <LinearLayout
-                style="@style/layoutFieldUserInfo"
+                style="@style/layout_field_user_info"
                 >
 
                 <android.support.design.widget.TextInputLayout
@@ -215,7 +215,7 @@
 
                     <EditText
                         android:id="@+id/git_et"
-                        style="@style/textUserInfo"
+                        style="@style/text_user_info"
                         android:hint="@string/git_hint"
                         android:inputType="textUri|textMultiLine"
                         android:text="github.com/Alexey/DevIntensive"
@@ -230,11 +230,11 @@
         </LinearLayout>
 
         <View
-            style="@style/lineHorizontal"
+            style="@style/line_horizontal"
             />
         <!-- О себе -->
         <LinearLayout
-            style="@style/layoutUserInfo"
+            style="@style/layout_user_info"
             >
 
             <ImageView
@@ -243,7 +243,7 @@
                 />
 
             <LinearLayout
-                style="@style/layoutFieldUserInfo"
+                style="@style/layout_field_user_info"
                 android:layout_height="wrap_content"
                 >
 
@@ -254,7 +254,7 @@
 
                     <EditText
                         android:id="@+id/info_et"
-                        style="@style/textUserInfo"
+                        style="@style/text_user_info"
                         android:hint="@string/info_hint"
                         android:inputType="textMultiLine"
                         android:text="@string/info_text"
