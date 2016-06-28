@@ -21,8 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_primary"
-            android:theme="@style/AppTheme.AppBarOverlay"
             android:fitsSystemWindows="true"
+            android:theme="@style/AppTheme.AppBarOverlay"
             >
 
             <android.support.design.widget.CollapsingToolbarLayout
@@ -40,7 +40,7 @@
                     android:layout_height="@dimen/profile_image_size"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/header_bg"
+                    android:src="@drawable/photo"
                     />
 
                 <android.support.v7.widget.Toolbar

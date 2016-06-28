@@ -3,18 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="172dp"
-    android:paddingTop="@dimen/spacing_medial_24"
-    android:paddingRight="@dimen/spacing_normal_16"
-    android:paddingLeft="@dimen/spacing_normal_16"
-    android:paddingBottom="@dimen/spacing_small_8"
     android:background="@drawable/header_bg"
+    android:paddingBottom="@dimen/spacing_small_8"
+    android:paddingLeft="@dimen/spacing_normal_16"
+    android:paddingRight="@dimen/spacing_normal_16"
+    android:paddingTop="@dimen/spacing_medial_24"
     >
 
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@color/color_accent"
+    <com.softdesign.devintensive.utils.CircleImageView
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
         android:layout_marginTop="@dimen/spacing_normal_16"
+        android:src="@drawable/avatar"
         />
 
     <LinearLayout
