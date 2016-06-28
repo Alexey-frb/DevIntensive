@@ -157,7 +157,7 @@
                                 style="@style/text_user_info"
                                 android:hint="@string/phone_hint"
                                 android:inputType="phone"
-                                android:text="+7 (927) 672-49-59"
+                                android:text="@string/phone_default_value"
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
@@ -195,7 +195,7 @@
                                 style="@style/text_user_info"
                                 android:hint="@string/email_hint"
                                 android:inputType="textEmailAddress"
-                                android:text="alexey.frb@gmail.com"
+                                android:text="@string/email_default_value"
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
@@ -233,7 +233,7 @@
                                 style="@style/text_user_info"
                                 android:hint="@string/vk_hint"
                                 android:inputType="textUri"
-                                android:text="vk.com/alx_tt"
+                                android:text="@string/vk_default_value"
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
@@ -271,7 +271,7 @@
                                 style="@style/text_user_info"
                                 android:hint="@string/git_hint"
                                 android:inputType="textUri|textMultiLine"
-                                android:text="github.com/Alexey/DevIntensive"
+                                android:text="@string/git_default_value"
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
@@ -310,7 +310,7 @@
                                 style="@style/text_user_info"
                                 android:hint="@string/info_hint"
                                 android:inputType="textMultiLine"
-                                android:text="@string/info_text"
+                                android:text="@string/info_default_value"
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
