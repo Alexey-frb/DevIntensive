@@ -1,12 +1,20 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="icon">
         <item name="android:layout_width">@dimen/size_small_24</item>
@@ -25,7 +33,7 @@
         <item name="android:layout_marginRight">@dimen/spacing_medium_32</item>
     </style>
 
-    <style name="textEdit">
+    <style name="text_user_info">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:enabled">false</item>
@@ -33,18 +41,25 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:textSize">@dimen/font_normal_15</item>
+        <item name="android:textSize">@dimen/font_normal_14</item>
     </style>
 
-    <style name="textView">
+    <style name="text_stats_info">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:textSize">@dimen/font_normal_15</item>
     </style>
 
-    <style name="layoutField">
+    <style name="text_stats_info.hint">
+        <item name="android:textSize">@dimen/font_normal_14</item>
+    </style>
+
+    <style name="text_stats_info.value">
+        <item name="android:textSize">@dimen/font_medium_24</item>
+    </style>
+
+    <style name="layout_user_info">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/spacing_small_8</item>
@@ -52,9 +67,9 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="layout">
+    <style name="layout_field_user_info">
         <item name="android:layout_width">@dimen/size_smaller_0dp</item>
-        <item name="android:layout_height">@dimen/size_large_72</item>
+        <item name="android:layout_height">@dimen/size_medium_56</item>
         <item name="android:layout_marginLeft">@dimen/spacing_medium_32</item>
         <item name="android:layout_marginRight">@dimen/spacing_normal_16</item>
         <item name="android:layout_weight">1</item>
@@ -62,11 +77,11 @@
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="layoutStats">
+    <style name="layout_field_stats_info">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/size_medium_56</item>
-        <item name="android:layout_marginBottom">@dimen/spacing_28dp</item>
-        <item name="android:layout_marginTop">@dimen/spacing_28dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_medial_28</item>
+        <item name="android:layout_marginTop">@dimen/spacing_medial_28</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:orientation">vertical</item>
@@ -74,9 +89,9 @@
 
     <style name="line_vertical">
         <item name="android:layout_width">@dimen/line_size</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginBottom">@dimen/spacing_medial_24</item>
-        <item name="android:layout_marginTop">@dimen/spacing_medial_24</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_medial_28</item>
+        <item name="android:layout_marginTop">@dimen/spacing_medial_28</item>
         <item name="android:background">@color/gray_light</item>
     </style>
 
@@ -85,6 +100,10 @@
         <item name="android:layout_height">@dimen/line_size</item>
         <item name="android:layout_marginLeft">@dimen/spacing_largest_72</item>
         <item name="android:background">@color/gray_light</item>
+    </style>
+
+    <style name="custom_dialog">
+        <item name="android:fullDark">@android:color/transparent</item>
     </style>
 
 </resources>

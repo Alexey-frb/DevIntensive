@@ -5,13 +5,17 @@
     <string name="vk_hint">Профиль в VK</string>
     <string name="git_hint">Репозиторий</string>
     <string name="info_hint">О себе</string>
-    <string name="info_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    <string name="raiting">Рейтинг</string>
+    <string name="rows_code">Написано строк кода</string>
+    <string name="project">Проектов</string>
+    <string name="phone_default_value">+7 (927) 672-49-59</string>
+    <string name="email_default_value">alexey.frb@gmail.com</string>
+    <string name="vk_default_value">vk.com/alx_tt</string>
+    <string name="git_default_value">github.com/Alexey/DevIntensive</string>
+    <string name="info_default_value">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
         deserunt mollit anim id est laborum.</string>
-    <string name="raiting">Рейтинг</string>
-    <string name="rows_code">Написано строк кода</string>
-    <string name="project">Проектов</string>
 </resources>
