@@ -1,5 +1,6 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -60,6 +61,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView mProfileImage;
 
     private EditText mUserPhone, mUserMail, mUserVk, mUserGit, mUserBio;
+    private ImageView mCallPhone, mSendMail, mOpenVk, mOpenGit;
+
     private List<EditText> mUserInfoViews;
 
     private AppBarLayout.LayoutParams mAppBarParams = null;
@@ -103,6 +106,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUserGit = (EditText) findViewById(R.id.git_et);
         mUserBio = (EditText) findViewById(R.id.info_et);
 
+        mCallPhone = (ImageView) findViewById(R.id.call_phone_iv);
+        mSendMail = (ImageView) findViewById(R.id.send_email_iv);
+        mOpenVk = (ImageView) findViewById(R.id.open_vk_iv);
+        mOpenGit = (ImageView) findViewById(R.id.open_git_iv);
+
         mUserInfoViews = new ArrayList<>();
         mUserInfoViews.add(mUserPhone);
         mUserInfoViews.add(mUserMail);
@@ -113,9 +121,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mFab.setOnClickListener(this);
         mProfilePlaceholder.setOnClickListener(this);
 
+        mCallPhone.setOnClickListener(this);
+        mSendMail.setOnClickListener(this);
+        mOpenVk.setOnClickListener(this);
+        mOpenGit.setOnClickListener(this);
+
         setupToolbar();
         setupDrawer();
         loadUserInfoValue();
+
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
                 .placeholder(R.drawable.photo) // TODO: 08.07.2016 сделать плейсхолдер и transform+crop
@@ -219,9 +233,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     mCurrentEditMode = 0;
                 }
                 break;
+
             case R.id.profile_placeholder:
                 // TODO: 08.07.2016 сделать выбор откуда загружать фото
                 showDialog(ConstantManager.LOAD_PROFILE_PHOTO);
+                break;
+
+            case R.id.call_phone_iv:
+                dialPhone(mUserPhone.getText().toString());
+                break;
+
+            case R.id.send_email_iv:
+                sendMail(mUserMail.getText().toString());
+                break;
+
+            case R.id.open_vk_iv:
+                openLinkWeb(mUserVk.getText().toString());
+                break;
+
+            case R.id.open_git_iv:
+                openLinkWeb(mUserGit.getText().toString());
                 break;
         }
     }
@@ -315,6 +346,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 mCollapsingToolbar.setExpandedTitleColor(Color.TRANSPARENT);
             }
+
+            mUserPhone.requestFocus();
         } else {
             mFab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
             for (EditText userValue : mUserInfoViews) {
@@ -347,6 +380,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDataManager.getPreferencesManager().saveUserProfileData(userData);
     }
 
+    private void dialPhone(String number) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
+            startActivity(dialIntent);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CALL_PHONE
+            }, ConstantManager.CALL_PHONE_REQUEST_PERMISSION_CODE);
+
+            Snackbar.make(mCoordinatorLayout, "Для корректной работы приложения необходимо дать требуемые разрешения", Snackbar.LENGTH_LONG)
+                    .setAction("Разрешить", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openApplicationSettings();
+                        }
+                    }).show();
+        }
+    }
+
+    private void sendMail(String mail) {
+        Intent sendMailIntent = new Intent(Intent.ACTION_SEND);
+        sendMailIntent.setType("text/html");
+        sendMailIntent.putExtra(Intent.EXTRA_EMAIL, mail);
+        sendMailIntent.putExtra(Intent.EXTRA_SUBJECT, "Content subject");
+        sendMailIntent.putExtra(Intent.EXTRA_TEXT, "Content text");
+        startActivity(Intent.createChooser(sendMailIntent, "Send Email"));
+    }
+
+
+    private void openLinkWeb(String link) {
+        Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
+        startActivity(openLinkIntent);
+    }
+
     private void loadPhotoFromGallery() {
         Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
@@ -355,8 +422,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void loadPhotoFromCamera() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
             Intent takeCaptureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -374,8 +441,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         } else {
             ActivityCompat.requestPermissions(this, new String[]{
-                    android.Manifest.permission.CAMERA,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
 
             Snackbar.make(mCoordinatorLayout, "Для корректной работы приложения необходимо дать требуемые разрешения", Snackbar.LENGTH_LONG)
