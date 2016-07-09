@@ -24,4 +24,15 @@
     <string name="user_profile_dialog_cancel">Отмена</string>
     <string name="user_profile_dialog_title">Изменить фотографию профиля</string>
     <string name="user_profile_choose_message">выберите фото</string>
+    <string name="login_frame_title">ВОЙТИ</string>
+    <string name="login_frame_email_hint">E-mail</string>
+    <string name="login_frame_password_hint">Пароль</string>
+    <string name="login_frame_button_title">ВОЙТИ</string>
+    <string name="login_frame_password_lost">Забыли пароль?</string>
+    <string name="info_raiting">5</string>
+    <string name="info_rows_code">5</string>
+    <string name="info_project">5</string>
+    <string name="user_name">Чуркин Алексей</string>
+    <string name="menu_profile">Мой профиль</string>
+    <string name="menu_team">Команда</string>
 </resources>

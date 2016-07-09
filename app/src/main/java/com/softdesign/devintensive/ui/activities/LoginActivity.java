@@ -8,7 +8,7 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.utils.ConstantManager;
 
 /**
- * Created by Alexey on 09.07.2016.
+ * Авторизация пользователя
  */
 public class LoginActivity extends BaseActivity {
     public static final String TAG = ConstantManager.TAG_PREFIX + "LoginActivity";
@@ -16,13 +16,6 @@ public class LoginActivity extends BaseActivity {
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
      * активности после его уничтожения.
-     * <p/>
-     * в данном методе инициализируется/производится:
-     * - UI пользовательский интерфейс (статика)
-     * - инициализация статических данных активити
-     * - связь данных со списками (инициализация адаптеров)
-     * <p/>
-     * Не запускать длительные операции по работе с данными в onCreate() !!!
      *
      * @param savedInstanceState - объект со значениями, сохраненными в Bundle - состояние UI
      */

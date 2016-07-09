@@ -16,7 +16,7 @@
 
             <ImageView
                 style="@style/icon.left"
-                android:src="@drawable/ic_call_black_24dp" />
+                android:src="@drawable/ic_phone" />
 
             <LinearLayout style="@style/layout_field_user_info">
 
@@ -36,7 +36,7 @@
             <ImageView
                 android:id="@+id/call_phone_iv"
                 style="@style/icon.right"
-                android:src="@drawable/ic_phone_in_talk_black_24dp" />
+                android:src="@drawable/ic_dial_phone" />
         </LinearLayout>
 
         <View style="@style/line_horizontal" />
@@ -45,7 +45,7 @@
 
             <ImageView
                 style="@style/icon.left"
-                android:src="@drawable/ic_email_black_24dp" />
+                android:src="@drawable/ic_email" />
 
             <LinearLayout style="@style/layout_field_user_info">
 
@@ -65,7 +65,7 @@
             <ImageView
                 android:id="@+id/send_email_iv"
                 style="@style/icon.right"
-                android:src="@drawable/ic_send_black_24dp" />
+                android:src="@drawable/ic_send" />
         </LinearLayout>
 
         <View style="@style/line_horizontal" />
@@ -74,7 +74,7 @@
 
             <ImageView
                 style="@style/icon.left"
-                android:src="@drawable/vk_circle" />
+                android:src="@drawable/ic_vk" />
 
             <LinearLayout style="@style/layout_field_user_info">
 
@@ -94,7 +94,7 @@
             <ImageView
                 android:id="@+id/open_vk_iv"
                 style="@style/icon.right"
-                android:src="@drawable/ic_remove_red_eye_black_24dp" />
+                android:src="@drawable/ic_open_link" />
         </LinearLayout>
 
         <View style="@style/line_horizontal" />
@@ -103,7 +103,7 @@
 
             <ImageView
                 style="@style/icon.left"
-                android:src="@drawable/github_circle" />
+                android:src="@drawable/ic_github" />
 
             <LinearLayout style="@style/layout_field_user_info">
 
@@ -123,7 +123,7 @@
             <ImageView
                 android:id="@+id/open_git_iv"
                 style="@style/icon.right"
-                android:src="@drawable/ic_remove_red_eye_black_24dp" />
+                android:src="@drawable/ic_open_link" />
         </LinearLayout>
 
         <View style="@style/line_horizontal" />
@@ -132,7 +132,7 @@
 
             <ImageView
                 style="@style/icon.left"
-                android:src="@drawable/ic_account_circle_black_24dp" />
+                android:src="@drawable/ic_account" />
 
             <LinearLayout
                 style="@style/layout_field_user_info"

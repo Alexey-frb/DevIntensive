@@ -45,6 +45,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Основная логика приложения
+ */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
 
@@ -132,7 +135,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
-                .placeholder(R.drawable.user_bg) // TODO: 08.07.2016 сделать плейсхолдер и transform+crop
+                .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
+                .centerInside()
+                .placeholder(R.drawable.user_bg)
                 .into(mProfileImage);
 
         if (savedInstanceState == null) {
@@ -142,14 +147,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             mCurrentEditMode = savedInstanceState.getInt(ConstantManager.EDIT_MODE_KEY, 0);
             changeEditMode(mCurrentEditMode);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            mNavigationDrawer.openDrawer(GravityCompat.START);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -221,6 +218,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.d(TAG, "onRestart");
     }
 
+    /**
+     * Обрабатывает пользовательские нажатия
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -235,7 +237,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.profile_placeholder:
-                // TODO: 08.07.2016 сделать выбор откуда загружать фото
                 showDialog(ConstantManager.LOAD_PROFILE_PHOTO);
                 break;
 
@@ -263,6 +264,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         outState.putInt(ConstantManager.EDIT_MODE_KEY, mCurrentEditMode);
     }
 
+    /**
+     * Кнопка Назад - закрыть меню, если открыто
+     */
     @Override
     public void onBackPressed() {
         if (mNavigationDrawer != null && mNavigationDrawer.isDrawerOpen(GravityCompat.START)) {
@@ -272,21 +276,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            mNavigationDrawer.openDrawer(GravityCompat.START);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Отобразить снекбар
+     *
+     * @param message - сообщение
+     */
     private void showSnackbar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Выполнить настройки тулбара
+     */
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
 
         mAppBarParams = (AppBarLayout.LayoutParams) mCollapsingToolbar.getLayoutParams();
         if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
+    /**
+     * Выполнить настройки меню
+     */
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -303,9 +326,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * Получение результата из другой Activity (фото из камеры или галлерии)
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode - код запроса
+     * @param resultCode  - код результата
+     * @param data        - данные
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -329,13 +352,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
-     * переключает режим редактирования
+     * Переключает режим редактирования
      *
      * @param mode 1-режим редактирования, 0-режим просмотра
      */
     private void changeEditMode(int mode) {
         if (mode == 1) {
-            mFab.setImageResource(R.drawable.ic_done_black_24dp);
+            mFab.setImageResource(R.drawable.ic_done);
             for (EditText userValue : mUserInfoViews) {
                 userValue.setEnabled(true);
                 userValue.setFocusable(true);
@@ -349,7 +372,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             mUserPhone.requestFocus();
         } else {
-            mFab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+            mFab.setImageResource(R.drawable.ic_mode_edit);
             for (EditText userValue : mUserInfoViews) {
                 userValue.setEnabled(false);
                 userValue.setFocusable(false);
@@ -365,6 +388,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Загрузить пользовательские данные
+     */
     private void loadUserInfoValue() {
         List<String> userData = mDataManager.getPreferencesManager().loadUserProfileData();
         for (int i = 0; i < userData.size(); i++) {
@@ -372,6 +398,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Сохранить пользоательские данные
+     */
     private void saveUserInfoValue() {
         List<String> userData = new ArrayList<>();
         for (EditText userFieldView : mUserInfoViews) {
@@ -380,25 +409,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDataManager.getPreferencesManager().saveUserProfileData(userData);
     }
 
+    /**
+     * Запустить приложение для звонка
+     *
+     * @param number - номер для звонка
+     */
     private void dialPhone(String number) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
-            startActivity(dialIntent);
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CALL_PHONE
-            }, ConstantManager.CALL_PHONE_REQUEST_PERMISSION_CODE);
-
-            Snackbar.make(mCoordinatorLayout, "Для корректной работы приложения необходимо дать требуемые разрешения", Snackbar.LENGTH_LONG)
-                    .setAction("Разрешить", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openApplicationSettings();
-                        }
-                    }).show();
-        }
+        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
+        startActivity(dialIntent);
     }
 
+    /**
+     * Запустить приложение для отправки почты
+     *
+     * @param mail - электронный адрес
+     */
     private void sendMail(String mail) {
         Intent sendMailIntent = new Intent(Intent.ACTION_SEND);
         sendMailIntent.setType("text/html");
@@ -408,12 +433,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startActivity(Intent.createChooser(sendMailIntent, "Send Email"));
     }
 
-
+    /**
+     * Запустить веб-браузер для просмотра ссылки
+     *
+     * @param link - ссылка
+     */
     private void openLinkWeb(String link) {
         Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
         startActivity(openLinkIntent);
     }
 
+    /**
+     * Загрузить фото из галерии
+     */
     private void loadPhotoFromGallery() {
         Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
@@ -421,7 +453,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_choose_message)), ConstantManager.REQUEST_GALLERY_PICTURE);
     }
 
+    /**
+     * Загрузить фото с камеры (сделать снимок)
+     */
     private void loadPhotoFromCamera() {
+        // Проверка наличия разрешения на использование камеры
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
@@ -435,7 +471,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
 
             if (mPhotoFile != null) {
-                // TODO: 08.07.2016 передать фотофайл в интент
+                // передача фотофайла в интент
                 takeCaptureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
                 startActivityForResult(takeCaptureIntent, ConstantManager.REQUEST_CAMERA_PICTURE);
             }
@@ -455,6 +491,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Обработка полученных разрешений
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == ConstantManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
@@ -471,25 +514,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
+    /**
+     * Спрятать фото профиля
+     */
     private void hideProfilePlaceholder() {
         mProfilePlaceholder.setVisibility(View.GONE);
     }
 
+    /**
+     * Показать фото профиля
+     */
     private void showProfilePlaceholder() {
         mProfilePlaceholder.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Заблокировать тулбар
+     */
     private void lockToolbar() {
         mAppBarLayout.setExpanded(true, true);
         mAppBarParams.setScrollFlags(0);
         mCollapsingToolbar.setLayoutParams(mAppBarParams);
     }
 
+    /**
+     * Разблокировать тулбар
+     */
     private void unlockToolbar() {
         mAppBarParams.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         mCollapsingToolbar.setLayoutParams(mAppBarParams);
     }
 
+    /**
+     * Создать диалог выбора откуда брать фото
+     *
+     * @param id
+     * @return
+     */
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -503,15 +564,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int choiceItem) {
                         switch (choiceItem) {
                             case 0:
-                                // TODO: 08.07.2016 загрузить из галлерии
                                 loadPhotoFromGallery();
                                 break;
                             case 1:
-                                // TODO: 08.07.2016 загрузить из камеры
                                 loadPhotoFromCamera();
                                 break;
                             case 2:
-                                // TODO: 08.07.2016 cancel
                                 dialog.cancel();
                                 break;
                         }
@@ -519,12 +577,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 });
                 return builder.create();
 
-
             default:
                 return null;
         }
     }
 
+    /**
+     * Создать файл для сохранения снимка с камеры
+     *
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -543,21 +606,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return image;
     }
 
+    /**
+     * Вставить фото в профиль
+     *
+     * @param selectedImage - фото
+     */
     private void insertProfileImage(Uri selectedImage) {
         Picasso.with(this)
                 .load(selectedImage)
-                .into(mProfileImage);// TODO: 08.07.2016 сделать плейсхолдер и transform+crop
+                .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
+                .centerInside()
+                .placeholder(R.drawable.user_bg)
+                .into(mProfileImage);
 
         mDataManager.getPreferencesManager().saveUserPhoto(selectedImage);
     }
 
+    /**
+     * Открыть настройки приложения
+     */
     public void openApplicationSettings() {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
 
         startActivityForResult(appSettingsIntent, ConstantManager.PERMISSION_REQUEST_SETTINGS_CODE);
     }
 }
-
-
-
-

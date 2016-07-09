@@ -11,11 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 28.06.2016.
+ * Сохранение/загрузка пользовательских данных, используя shared preferences
  */
 public class PreferencesManager {
-
-    private SharedPreferences mSharedPreferences;
 
     private static final String[] USER_FIELDS = {ConstantManager.USER_PHONE_KEY,
             ConstantManager.USER_MAIL_KEY, ConstantManager.USER_VK_KEY,
@@ -24,10 +22,17 @@ public class PreferencesManager {
     private static final int[] USER_VALUES = {R.string.phone_default_value, R.string.email_default_value,
             R.string.vk_default_value, R.string.git_default_value, R.string.info_default_value};
 
+    private SharedPreferences mSharedPreferences;
+
     public PreferencesManager() {
         this.mSharedPreferences = DevIntensiveApplication.getSharedPreferences();
     }
 
+    /**
+     * Сохранить пользовательские данные в shared preferences
+     *
+     * @param userFields
+     */
     public void saveUserProfileData(List<String> userFields) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         for (int i = 0; i < USER_FIELDS.length; i++) {
@@ -36,6 +41,11 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    /**
+     * Восстанавить пользовательские данные из shared preferences
+     *
+     * @return
+     */
     public List<String> loadUserProfileData() {
         List<String> userFields = new ArrayList<>();
         for (int i = 0; i < USER_FIELDS.length; i++) {
@@ -45,13 +55,23 @@ public class PreferencesManager {
         return userFields;
     }
 
+    /**
+     * Сохранить пользовательское фото в shared preferences
+     *
+     * @param uri
+     */
     public void saveUserPhoto(Uri uri) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.USER_PHOTO_KEY, uri.toString());
         editor.apply();
     }
 
+    /**
+     * Загрузить пользовательское фото из shared preferences
+     *
+     * @return
+     */
     public Uri loadUserPhoto() {
-        return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/avatar"));
+        return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/user_bg"));
     }
 }

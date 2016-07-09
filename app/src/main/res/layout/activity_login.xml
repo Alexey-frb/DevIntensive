@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_bg"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:context=".ui.activities.LoginActivity">
 
     <android.support.v7.widget.CardView
         android:id="@+id/authorization_box"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/login_frame_size"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="8dp">
+        app:cardCornerRadius="@dimen/login_frame_corner_radius"
+        app:cardElevation="@dimen/login_frame_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,13 +27,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="28dp">
+                android:paddingTop="@dimen/spacing_medial_28">
 
                 <View
                     android:id="@+id/login_indicator"
-                    android:layout_width="4dp"
+                    android:layout_width="@dimen/size_smaller_4"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="24dp"
+                    android:layout_marginRight="@dimen/spacing_medial_24"
                     android:background="@color/color_accent" />
 
                 <TextView
@@ -39,61 +41,60 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="ВОЙТИ"
+                    android:text="@string/login_frame_title"
                     android:textColor="@color/color_accent"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/font_medial_20" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dp"
-                android:layout_marginRight="28dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginLeft="@dimen/spacing_medial_28"
+                android:layout_marginRight="@dimen/spacing_medial_28"
+                android:layout_marginTop="@dimen/spacing_normal_16">
 
                 <EditText
                     android:id="@+id/login_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
-                    android:gravity="top"
-                    android:hint="E-mail"
+                    android:hint="@string/login_frame_email_hint"
                     android:inputType="textEmailAddress"
-                    android:text="alexey.frb@gmail.com"
+                    android:text="@string/email_default_value"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/font_normal_14" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dp"
-                android:layout_marginRight="28dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginLeft="@dimen/spacing_medial_28"
+                android:layout_marginRight="@dimen/spacing_medial_28"
+                android:layout_marginTop="@dimen/spacing_normal_16">
 
                 <EditText
                     android:id="@+id/login_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
-                    android:hint="Пароль"
+                    android:hint="@string/login_frame_password_hint"
                     android:inputType="textPassword"
                     android:text=""
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/font_normal_14" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/button"
-                android:layout_width="125dp"
+                android:layout_width="@dimen/login_frame_button_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="@dimen/spacing_medial_28"
                 android:fontFamily="sans-serif-medium"
-                android:text="Войти"
-                android:textSize="14sp"
+                android:text="@string/login_frame_button_title"
+                android:textSize="@dimen/font_normal_14"
                 android:theme="@style/AppTheme.Button.Red" />
 
             <TextView
@@ -101,11 +102,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="28dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="@dimen/spacing_medial_28"
+                android:layout_marginTop="@dimen/spacing_normal_16"
                 android:fontFamily="sans-serif-condensed"
-                android:text="Забыли пароль?"
-                android:textSize="14sp" />
+                android:text="@string/login_frame_password_lost"
+                android:textSize="@dimen/font_normal_14" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

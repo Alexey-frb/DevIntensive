@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 /**
- * Created by Alexey on 29.06.2016.
+ * Отвечает за обработку скроллинга хедера
  */
 public class HeaderBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
     private Context mContext;
