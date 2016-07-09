@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
-                .placeholder(R.drawable.photo) // TODO: 08.07.2016 сделать плейсхолдер и transform+crop
+                .placeholder(R.drawable.user_bg) // TODO: 08.07.2016 сделать плейсхолдер и transform+crop
                 .into(mProfileImage);
 
         if (savedInstanceState == null) {
