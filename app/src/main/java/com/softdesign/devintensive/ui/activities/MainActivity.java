@@ -45,34 +45,64 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Основная логика приложения
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
 
+    @BindView(R.id.main_coordinator_container)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.navigation_drawer)
+    DrawerLayout mNavigationDrawer;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+    @BindView(R.id.profile_placeholder)
+    RelativeLayout mProfilePlaceholder;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbar;
+    @BindView(R.id.appbar_layout)
+    AppBarLayout mAppBarLayout;
+    @BindView(R.id.user_photo_img)
+    ImageView mProfileImage;
+
+    @BindView(R.id.phone_et)
+    EditText mUserPhone;
+    @BindView(R.id.email_et)
+    EditText mUserMail;
+    @BindView(R.id.vk_et)
+    EditText mUserVk;
+    @BindView(R.id.git_et)
+    EditText mUserGit;
+    @BindView(R.id.info_et)
+    EditText mUserBio;
+
+    @BindView(R.id.call_phone_iv)
+    ImageView mCallPhone;
+    @BindView(R.id.send_email_iv)
+    ImageView mSendMail;
+    @BindView(R.id.open_vk_iv)
+    ImageView mOpenVk;
+    @BindView(R.id.open_git_iv)
+    ImageView mOpenGit;
+
+    @BindViews({R.id.phone_et, R.id.email_et, R.id.vk_et, R.id.git_et, R.id.info_et})
+    List<EditText> mUserInfoViews;
+
     private int mCurrentEditMode = 0;
-
     private DataManager mDataManager;
-    private CoordinatorLayout mCoordinatorLayout;
-    private Toolbar mToolbar;
-    private DrawerLayout mNavigationDrawer;
-    private FloatingActionButton mFab;
-    private RelativeLayout mProfilePlaceholder;
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private AppBarLayout mAppBarLayout;
-    private ImageView mProfileImage;
-
-    private EditText mUserPhone, mUserMail, mUserVk, mUserGit, mUserBio;
-    private ImageView mCallPhone, mSendMail, mOpenVk, mOpenGit;
-
-    private List<EditText> mUserInfoViews;
 
     private AppBarLayout.LayoutParams mAppBarParams = null;
 
     private File mPhotoFile = null;
     private Uri mSelectedImage = null;
-
 
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
@@ -93,41 +123,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate");
 
+        ButterKnife.bind(this);
+
         mDataManager = DataManager.getInstance();
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_container);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mNavigationDrawer = (DrawerLayout) findViewById(R.id.navigation_drawer);
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mProfilePlaceholder = (RelativeLayout) findViewById(R.id.profile_placeholder);
-        mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
-        mProfileImage = (ImageView) findViewById(R.id.user_photo_img);
-
-        mUserPhone = (EditText) findViewById(R.id.phone_et);
-        mUserMail = (EditText) findViewById(R.id.email_et);
-        mUserVk = (EditText) findViewById(R.id.vk_et);
-        mUserGit = (EditText) findViewById(R.id.git_et);
-        mUserBio = (EditText) findViewById(R.id.info_et);
-
-        mCallPhone = (ImageView) findViewById(R.id.call_phone_iv);
-        mSendMail = (ImageView) findViewById(R.id.send_email_iv);
-        mOpenVk = (ImageView) findViewById(R.id.open_vk_iv);
-        mOpenGit = (ImageView) findViewById(R.id.open_git_iv);
-
-        mUserInfoViews = new ArrayList<>();
-        mUserInfoViews.add(mUserPhone);
-        mUserInfoViews.add(mUserMail);
-        mUserInfoViews.add(mUserVk);
-        mUserInfoViews.add(mUserGit);
-        mUserInfoViews.add(mUserBio);
-
-        mFab.setOnClickListener(this);
-        mProfilePlaceholder.setOnClickListener(this);
-
-        mCallPhone.setOnClickListener(this);
-        mSendMail.setOnClickListener(this);
-        mOpenVk.setOnClickListener(this);
-        mOpenGit.setOnClickListener(this);
 
         setupToolbar();
         setupDrawer();
@@ -224,6 +222,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param v
      */
     @Override
+    @SuppressWarnings("deprecation")
+    @OnClick({R.id.fab, R.id.profile_placeholder, R.id.call_phone_iv, R.id.send_email_iv, R.id.open_vk_iv, R.id.open_git_iv})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab:
@@ -552,6 +552,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @return
      */
     @Override
+    @SuppressWarnings("deprecation")
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case ConstantManager.LOAD_PROFILE_PHOTO:
