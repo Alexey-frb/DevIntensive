@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.utils.ConstantManager;
+import com.softdesign.devintensive.utils.EditTextWatcher;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -96,6 +97,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindViews({R.id.phone_et, R.id.email_et, R.id.vk_et, R.id.git_et, R.id.info_et})
     List<EditText> mUserInfoViews;
 
+    @BindViews({R.id.call_phone_iv, R.id.send_email_iv, R.id.open_vk_iv, R.id.open_git_iv})
+    List<ImageView> mUserActions;
+
     private int mCurrentEditMode = 0;
     private DataManager mDataManager;
 
@@ -103,6 +107,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private File mPhotoFile = null;
     private Uri mSelectedImage = null;
+
+    private EditTextWatcher mUserPhoneWatcher;
+    private EditTextWatcher mUserMailWatcher;
+    private EditTextWatcher mUserVkWatcher;
+    private EditTextWatcher mUserGitWatcher;
 
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
@@ -130,6 +139,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setupToolbar();
         setupDrawer();
         loadUserInfoValue();
+
+        mUserPhoneWatcher = new EditTextWatcher(this, mUserPhone);
+        mUserMailWatcher = new EditTextWatcher(this, mUserMail);
+        mUserVkWatcher = new EditTextWatcher(this, mUserVk);
+        mUserGitWatcher = new EditTextWatcher(this, mUserGit);
 
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
@@ -271,6 +285,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onBackPressed() {
         if (mNavigationDrawer != null && mNavigationDrawer.isDrawerOpen(GravityCompat.START)) {
             mNavigationDrawer.closeDrawer(GravityCompat.START);
+        } else if (mCurrentEditMode == 1) {
+            changeEditMode(0);
+            mCurrentEditMode = 0;
         } else {
             super.onBackPressed();
         }
@@ -282,6 +299,57 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             mNavigationDrawer.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Получение результата из другой Activity (фото из камеры или галлерии)
+     *
+     * @param requestCode - код запроса
+     * @param resultCode  - код результата
+     * @param data        - данные
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case ConstantManager.REQUEST_GALLERY_PICTURE:
+                if (resultCode == RESULT_OK && data != null) {
+                    mSelectedImage = data.getData();
+
+                    insertProfileImage(mSelectedImage);
+                }
+                break;
+
+            case ConstantManager.REQUEST_CAMERA_PICTURE:
+                if (resultCode == RESULT_OK && mPhotoFile != null) {
+                    mSelectedImage = Uri.fromFile(mPhotoFile);
+
+                    insertProfileImage(mSelectedImage);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Обработка полученных разрешений
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == ConstantManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
+                // например, вывести сообщение или обработать какой то логикой, если нужно
+            }
+        }
+
+        if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
+            // например, вывести сообщение или обработать какой то логикой, если нужно
+        }
+
     }
 
     /**
@@ -323,39 +391,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
-    /**
-     * Получение результата из другой Activity (фото из камеры или галлерии)
-     *
-     * @param requestCode - код запроса
-     * @param resultCode  - код результата
-     * @param data        - данные
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case ConstantManager.REQUEST_GALLERY_PICTURE:
-                if (resultCode == RESULT_OK && data != null) {
-                    mSelectedImage = data.getData();
-
-                    insertProfileImage(mSelectedImage);
-                }
-                break;
-
-            case ConstantManager.REQUEST_CAMERA_PICTURE:
-                if (resultCode == RESULT_OK && mPhotoFile != null) {
-                    mSelectedImage = Uri.fromFile(mPhotoFile);
-
-                    insertProfileImage(mSelectedImage);
-                }
-                break;
-        }
-    }
 
     /**
      * Переключает режим редактирования
      *
      * @param mode 1-режим редактирования, 0-режим просмотра
      */
+    @SuppressWarnings("deprecation")
     private void changeEditMode(int mode) {
         if (mode == 1) {
             mFab.setImageResource(R.drawable.ic_done);
@@ -363,28 +405,45 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 userValue.setEnabled(true);
                 userValue.setFocusable(true);
                 userValue.setFocusableInTouchMode(true);
-
-                showProfilePlaceholder();
-                lockToolbar();
-
-                mCollapsingToolbar.setExpandedTitleColor(Color.TRANSPARENT);
             }
+            for (ImageView userAction : mUserActions) {
+                userAction.setEnabled(false);
+            }
+
+            mUserPhone.addTextChangedListener(mUserPhoneWatcher);
+            mUserMail.addTextChangedListener(mUserMailWatcher);
+            mUserVk.addTextChangedListener(mUserVkWatcher);
+            mUserGit.addTextChangedListener(mUserGitWatcher);
+
+            showProfilePlaceholder();
+            lockToolbar();
+
+            mCollapsingToolbar.setExpandedTitleColor(Color.TRANSPARENT);
 
             mUserPhone.requestFocus();
         } else {
             mFab.setImageResource(R.drawable.ic_mode_edit);
+
             for (EditText userValue : mUserInfoViews) {
                 userValue.setEnabled(false);
                 userValue.setFocusable(false);
                 userValue.setFocusableInTouchMode(false);
-
-                hideProfilePlaceholder();
-                unlockToolbar();
-
-                mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.white));
-
-                saveUserInfoValue();
             }
+            for (ImageView userAction : mUserActions) {
+                userAction.setEnabled(true);
+            }
+
+            mUserPhone.removeTextChangedListener(mUserPhoneWatcher);
+            mUserMail.removeTextChangedListener(mUserMailWatcher);
+            mUserVk.removeTextChangedListener(mUserVkWatcher);
+            mUserGit.removeTextChangedListener(mUserGitWatcher);
+
+            hideProfilePlaceholder();
+            unlockToolbar();
+
+            mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.white));
+
+            saveUserInfoValue();
         }
     }
 
@@ -430,7 +489,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         sendMailIntent.putExtra(Intent.EXTRA_EMAIL, mail);
         sendMailIntent.putExtra(Intent.EXTRA_SUBJECT, "Content subject");
         sendMailIntent.putExtra(Intent.EXTRA_TEXT, "Content text");
-        startActivity(Intent.createChooser(sendMailIntent, "Send Email"));
+
+        try {
+            startActivity(Intent.createChooser(sendMailIntent, "Send Email"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            showSnackbar("Приложение для работы с почтой отсутствует!");
+        }
     }
 
     /**
@@ -489,29 +553,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         }
                     }).show();
         }
-    }
-
-    /**
-     * Обработка полученных разрешений
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == ConstantManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
-                // например, вывести сообщение или обработать какой то логикой, если нужно
-            }
-        }
-
-        if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
-            // например, вывести сообщение или обработать какой то логикой, если нужно
-        }
-
     }
 
     /**

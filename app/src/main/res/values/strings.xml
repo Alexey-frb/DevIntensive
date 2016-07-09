@@ -35,4 +35,11 @@
     <string name="user_name">Чуркин Алексей</string>
     <string name="menu_profile">Мой профиль</string>
     <string name="menu_team">Команда</string>
+
+    <string name="error_create_file">Ошибка создания файла</string>
+    <string name="error_phone_et">Номер телефона должен содержать 11-20 символов</string>
+    <string name="error_email_et">Введен некорректный e-mail</string>
+    <string name="error_vk_et">Введите адрес в формате vk.com/xxx</string>
+    <string name="error_git_et">Введите адрес в формате github.com/xxx</string>
+
 </resources>
