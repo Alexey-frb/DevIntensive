@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/size_largest_112dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- Мобильный -->
+        <LinearLayout style="@style/layout_user_info">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_phone" />
+
+            <LinearLayout style="@style/layout_field_user_info">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/phone_et"
+                        style="@style/text_user_info"
+                        android:hint="@string/phone_hint"
+                        android:inputType="phone"
+                        android:text="@string/phone_default_value" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/call_phone_iv"
+                style="@style/icon.right"
+                android:src="@drawable/ic_dial_phone" />
+        </LinearLayout>
+
+        <View style="@style/line_horizontal" />
+        <!-- E-mail -->
+        <LinearLayout style="@style/layout_user_info">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_email" />
+
+            <LinearLayout style="@style/layout_field_user_info">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/email_et"
+                        style="@style/text_user_info"
+                        android:hint="@string/email_hint"
+                        android:inputType="textEmailAddress"
+                        android:text="@string/email_default_value" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/send_email_iv"
+                style="@style/icon.right"
+                android:src="@drawable/ic_send" />
+        </LinearLayout>
+
+        <View style="@style/line_horizontal" />
+        <!-- Профиль в VK -->
+        <LinearLayout style="@style/layout_user_info">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_vk" />
+
+            <LinearLayout style="@style/layout_field_user_info">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/vk_et"
+                        style="@style/text_user_info"
+                        android:hint="@string/vk_hint"
+                        android:inputType="textUri"
+                        android:text="@string/vk_default_value" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/open_vk_iv"
+                style="@style/icon.right"
+                android:src="@drawable/ic_open_link" />
+        </LinearLayout>
+
+        <View style="@style/line_horizontal" />
+        <!-- Репозиторий -->
+        <LinearLayout style="@style/layout_user_info">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_github" />
+
+            <LinearLayout style="@style/layout_field_user_info">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/git_et"
+                        style="@style/text_user_info"
+                        android:hint="@string/git_hint"
+                        android:inputType="textUri|textMultiLine"
+                        android:text="@string/git_default_value" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/open_git_iv"
+                style="@style/icon.right"
+                android:src="@drawable/ic_open_link" />
+        </LinearLayout>
+
+        <View style="@style/line_horizontal" />
+        <!-- О себе -->
+        <LinearLayout style="@style/layout_user_info">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_account" />
+
+            <LinearLayout
+                style="@style/layout_field_user_info"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/info_et"
+                        style="@style/text_user_info"
+                        android:hint="@string/info_hint"
+                        android:inputType="textMultiLine"
+                        android:text="@string/info_default_value" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <ImageView style="@style/icon.right" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

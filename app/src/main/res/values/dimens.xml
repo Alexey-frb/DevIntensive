@@ -41,9 +41,14 @@
     <dimen name="line_size">1dp</dimen>
 
     <!-- Misc -->
-    <dimen name="spacing_28dp">28dp</dimen>
     <dimen name="profile_image_size">256dp</dimen>
     <dimen name="fab_right_space">8dp</dimen>
     <dimen name="avatar_size">60dp</dimen>
+    <dimen name="placeholder_photo_size_90">90dp</dimen>
+    <dimen name="login_frame_size">240dp</dimen>
+    <dimen name="login_frame_corner_radius">2dp</dimen>
+    <dimen name="login_frame_elevation">8dp</dimen>
+    <dimen name="size_smaller_4">4dp</dimen>
+    <dimen name="login_frame_button_width">125dp</dimen>
 
 </resources>

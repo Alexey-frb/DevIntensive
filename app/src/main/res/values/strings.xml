@@ -18,4 +18,28 @@
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
         deserunt mollit anim id est laborum.</string>
+    <string name="user_profile.placeholder.image">Изменить фотографию профиля</string>
+    <string name="user_profile_dialog_gallery">Загрузить из галлереи</string>
+    <string name="user_profile_dialog_camera">Сделать снимок</string>
+    <string name="user_profile_dialog_cancel">Отмена</string>
+    <string name="user_profile_dialog_title">Изменить фотографию профиля</string>
+    <string name="user_profile_choose_message">выберите фото</string>
+    <string name="login_frame_title">ВОЙТИ</string>
+    <string name="login_frame_email_hint">E-mail</string>
+    <string name="login_frame_password_hint">Пароль</string>
+    <string name="login_frame_button_title">ВОЙТИ</string>
+    <string name="login_frame_password_lost">Забыли пароль?</string>
+    <string name="info_raiting">5</string>
+    <string name="info_rows_code">5</string>
+    <string name="info_project">5</string>
+    <string name="user_name">Чуркин Алексей</string>
+    <string name="menu_profile">Мой профиль</string>
+    <string name="menu_team">Команда</string>
+
+    <string name="error_create_file">Ошибка создания файла</string>
+    <string name="error_phone_et">Номер телефона должен содержать 11-20 символов</string>
+    <string name="error_email_et">Введен некорректный e-mail</string>
+    <string name="error_vk_et">Введите адрес в формате vk.com/xxx</string>
+    <string name="error_git_et">Введите адрес в формате github.com/xxx</string>
+
 </resources>

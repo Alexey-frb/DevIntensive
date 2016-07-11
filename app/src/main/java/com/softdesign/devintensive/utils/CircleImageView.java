@@ -16,7 +16,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by Alexey on 29.06.2016.
+ * Используется для скругления фото для аватара
  */
 public class CircleImageView extends ImageView {
 
@@ -127,7 +127,6 @@ public class CircleImageView extends ImageView {
         public Bitmap getBitmap() {
             return mBitmap;
         }
-
         // TODO allow set and use target density, mutate, constant state, changing configurations, etc.
     }
 }

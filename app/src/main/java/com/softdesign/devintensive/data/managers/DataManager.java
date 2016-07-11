@@ -1,8 +1,5 @@
 package com.softdesign.devintensive.data.managers;
 
-/**
- * Created by Alexey on 28.06.2016.
- */
 public class DataManager {
 
     private static DataManager INSTANCE = null;
