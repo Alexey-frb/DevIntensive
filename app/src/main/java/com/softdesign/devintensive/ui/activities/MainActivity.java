@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
 import com.softdesign.devintensive.utils.CircleImageView;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.EditTextWatcher;
@@ -53,6 +55,12 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Основная логика приложения
@@ -149,7 +157,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDataManager = DataManager.getInstance();
 
         setupToolbar();
-
         initUserFields();
         initUserInfoValue();
         setupDrawer();
@@ -331,6 +338,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     mSelectedImage = data.getData();
 
                     insertProfileImage(mSelectedImage);
+                    uploadPhoto(getFileFromUri(mSelectedImage));
                 }
                 break;
 
@@ -339,6 +347,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     mSelectedImage = Uri.fromFile(mPhotoFile);
 
                     insertProfileImage(mSelectedImage);
+                    uploadPhoto(mPhotoFile);
                 }
                 break;
         }
@@ -409,7 +418,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
         userName.setText(mDataManager.getPreferencesManager().getUserName());
         userEmail.setText(mUserMail.getText());
-
 
         CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
         Picasso.with(this)
@@ -707,5 +715,51 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
 
         startActivityForResult(appSettingsIntent, ConstantManager.PERMISSION_REQUEST_SETTINGS_CODE);
+    }
+
+    private void uploadPhoto(File file) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
+        Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
+                mDataManager.getPreferencesManager().getUserId(), body);
+        call.enqueue(new Callback<UploadPhotoRes>() {
+            @Override
+            public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
+                //// TODO: 13.07.2016 реализовать получение колбека
+            }
+
+            @Override
+            public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
+                //// TODO: 13.07.2016 реализовать получение ошибки
+            }
+        });
+    }
+
+    private void uploadAvatar(File file) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), requestFile);
+        Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
+                mDataManager.getPreferencesManager().getUserId(), body);
+        call.enqueue(new Callback<UploadPhotoRes>() {
+            @Override
+            public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
+                //// TODO: 13.07.2016 реализовать получение колбека
+            }
+
+            @Override
+            public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
+                //// TODO: 13.07.2016 реализовать получение ошибки
+            }
+        });
+    }
+
+    private File getFileFromUri(Uri uri) {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = this.getContentResolver().query(uri, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String filePath = cursor.getString(columnIndex);
+        cursor.close();
+        return new File(filePath);
     }
 }

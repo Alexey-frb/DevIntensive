@@ -36,7 +36,6 @@ public class PreferencesManager {
             ConstantManager.USER_CODE_LINES_VALUE,
             ConstantManager.USER_PROJECT_VALUE};
 
-
     private SharedPreferences mSharedPreferences;
 
     public PreferencesManager() {

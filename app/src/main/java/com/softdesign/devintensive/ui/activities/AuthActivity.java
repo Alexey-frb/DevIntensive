@@ -21,6 +21,8 @@ import com.softdesign.devintensive.utils.NetworkStatusChecker;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,10 +33,16 @@ import retrofit2.Response;
 public class AuthActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = ConstantManager.TAG_PREFIX + "AuthActivity";
 
-    private Button mSignIn;
-    private TextView mRememberPassword;
-    private EditText mLogin, mPassword;
-    private CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.main_coordinator_container)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.login_btn)
+    Button mSignIn;
+    @BindView(R.id.remember_txt)
+    TextView mRememberPassword;
+    @BindView(R.id.login_email_et)
+    EditText mLogin;
+    @BindView(R.id.login_password_et)
+    EditText mPassword;
 
     private DataManager mDataManager;
 
@@ -51,15 +59,6 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         Log.d(TAG, "onCreate");
 
         mDataManager = DataManager.getInstance();
-
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_container);
-        mSignIn = (Button) findViewById(R.id.login_btn);
-        mRememberPassword = (TextView) findViewById(R.id.remember_txt);
-        mLogin = (EditText) findViewById(R.id.login_email_et);
-        mPassword = (EditText) findViewById(R.id.login_password_et);
-
-        mSignIn.setOnClickListener(this);
-        mRememberPassword.setOnClickListener(this);
     }
 
     /**
@@ -132,6 +131,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
+    @OnClick({R.id.login_btn, R.id.remember_txt})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_btn:
@@ -165,10 +165,8 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         saveUserFields(userModel);
         saveUserData(userModel);
 
-
         mDataManager.getPreferencesManager().saveUserPhoto(Uri.parse(userModel.getData().getUser().getPublicInfo().getPhoto()));
         mDataManager.getPreferencesManager().saveUserAvatar(Uri.parse(userModel.getData().getUser().getPublicInfo().getAvatar()));
-
 
         Intent loginIntent = new Intent(this, MainActivity.class);
         startActivity(loginIntent);
@@ -227,5 +225,4 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
         mDataManager.getPreferencesManager().saveUserData(userData);
     }
-
 }
