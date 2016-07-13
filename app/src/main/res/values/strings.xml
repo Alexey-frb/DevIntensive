@@ -25,8 +25,8 @@
     <string name="user_profile_dialog_title">Изменить фотографию профиля</string>
     <string name="user_profile_choose_message">выберите фото</string>
     <string name="login_frame_title">ВОЙТИ</string>
-    <string name="login_frame_email_hint">E-mail</string>
-    <string name="login_frame_password_hint">Пароль</string>
+    <string name="login_frame_email_hint">Введите е-mail</string>
+    <string name="login_frame_password_hint">Введите пароль</string>
     <string name="login_frame_button_title">ВОЙТИ</string>
     <string name="login_frame_password_lost">Забыли пароль?</string>
     <string name="info_raiting">5</string>

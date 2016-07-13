@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="172dp"
-    android:background="@drawable/nav_header_bg"
-    android:paddingBottom="@dimen/spacing_small_8"
-    android:paddingLeft="@dimen/spacing_normal_16"
-    android:paddingRight="@dimen/spacing_normal_16"
-    android:paddingTop="@dimen/spacing_medial_24">
+                android:layout_width="match_parent"
+                android:layout_height="172dp"
+                android:background="@drawable/nav_header_bg"
+                android:paddingBottom="@dimen/spacing_small_8"
+                android:paddingLeft="@dimen/spacing_normal_16"
+                android:paddingRight="@dimen/spacing_normal_16"
+                android:paddingTop="@dimen/spacing_medial_24">
 
     <com.softdesign.devintensive.utils.CircleImageView
+        android:id="@+id/user_avatar_img"
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
         android:layout_marginTop="@dimen/spacing_normal_16"
-        android:src="@drawable/user_avatar" />
+        android:src="@drawable/user_avatar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +29,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="@string/user_name"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_normal_14" />
+            android:textSize="@dimen/font_normal_14"/>
 
         <TextView
             android:id="@+id/user_email_txt"
@@ -37,7 +38,7 @@
             android:fontFamily="sans-serif"
             android:text="@string/email_default_value"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_normal_14" />
+            android:textSize="@dimen/font_normal_14"/>
 
     </LinearLayout>
 </RelativeLayout>
