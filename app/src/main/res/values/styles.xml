@@ -12,9 +12,9 @@
         <item name="android:windowActionBar">false</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/color_accent</item>
@@ -112,4 +112,12 @@
         <item name="android:fullDark">@android:color/transparent</item>
     </style>
 
+
+    <!-- ToolBar -->
+
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+    </style>
 </resources>

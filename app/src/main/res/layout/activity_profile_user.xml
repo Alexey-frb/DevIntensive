@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 android:id="@+id/main_coordinator_container"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_primary"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/color_primary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+
+            <ImageView
+                android:id="@+id/user_photo_img"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/profile_image_size"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/user_bg"/>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.PopupOverlay"
+                app:layout_collapseMode="pin"
+                app:theme="@style/ToolBarStyle"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <!-- Статистика -->
+    <LinearLayout
+        android:id="@+id/user_info_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_primary"
+        android:orientation="horizontal"
+        app:layout_behavior=".ui.views.behaviors.HeaderBehavior">
+        <!-- Рейтинг -->
+        <LinearLayout style="@style/layout_field_stats_info">
+
+            <TextView
+                android:id="@+id/info_raiting"
+                style="@style/text_stats_info.value"
+                android:text="@string/info_raiting"/>
+
+            <TextView
+                style="@style/text_stats_info.hint"
+                android:text="@string/raiting"/>
+        </LinearLayout>
+
+        <View style="@style/line_vertical"/>
+        <!-- Написано строк кода -->
+        <LinearLayout
+            style="@style/layout_field_stats_info"
+            android:layout_weight="2">
+
+            <TextView
+                android:id="@+id/info_rows_code"
+                style="@style/text_stats_info.value"
+                android:text="@string/info_rows_code"/>
+
+            <TextView
+                style="@style/text_stats_info.hint"
+                android:text="@string/rows_code"/>
+        </LinearLayout>
+
+        <View style="@style/line_vertical"/>
+        <!-- Проектов -->
+        <LinearLayout style="@style/layout_field_stats_info">
+
+            <TextView
+                android:id="@+id/info_project"
+                style="@style/text_stats_info.value"
+                android:text="@string/info_project"/>
+
+            <TextView
+                style="@style/text_stats_info.hint"
+                android:text="@string/project"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/static_profile_content"/>
+
+</android.support.design.widget.CoordinatorLayout>
+

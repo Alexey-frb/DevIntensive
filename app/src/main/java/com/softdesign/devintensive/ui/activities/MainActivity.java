@@ -407,8 +407,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackbar(item.getTitle().toString());
                 item.setChecked(true);
+
+                switch (item.getItemId()) {
+                    case R.id.user_profile_menu:
+                        startActivity(new Intent(MainActivity.this, MainActivity.class));
+                        break;
+                    case R.id.team_menu:
+                        startActivity(new Intent(MainActivity.this, UserListActivity.class));
+                        break;
+                }
+
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
                 return false;
             }

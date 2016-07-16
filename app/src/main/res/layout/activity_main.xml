@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:background="@color/color_primary"
             android:orientation="horizontal"
-            app:layout_behavior=".ui.view.behaviors.HeaderBehavior">
+            app:layout_behavior=".ui.views.behaviors.HeaderBehavior">
             <!-- Рейтинг -->
             <LinearLayout style="@style/layout_field_stats_info">
 
