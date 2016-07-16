@@ -9,7 +9,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -32,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UserListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     private static final String TAG = ConstantManager.TAG_PREFIX + "UserListActivity";
 
@@ -45,10 +44,13 @@ public class UserListActivity extends AppCompatActivity implements SearchView.On
     private UserAdapter mUserAdapter;
     private List<UserListRes.UserData> mUsers;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
+
+        //ButterKnife.bind(this);
 
         mDataManager = DataManager.getInstance();
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_container);
@@ -58,6 +60,7 @@ public class UserListActivity extends AppCompatActivity implements SearchView.On
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
 
         setupToolbar();
         setupDrawer();
@@ -90,18 +93,31 @@ public class UserListActivity extends AppCompatActivity implements SearchView.On
     }
 
     private void loadUsers() {
+        showProgress();
         Call<UserListRes> call = mDataManager.getUserList();
 
         call.enqueue(new Callback<UserListRes>() {
             @Override
             public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
-                try {
-                    mUsers = response.body().getData();
-                    updateUserList(mUsers);
+                hideProgress();
 
-                } catch (NullPointerException e) {
-                    Log.e(TAG, e.toString());
-                    showSnackbar("Что то пошло не так. :(");
+                if (response.code() == 200) {
+                    try {
+                        mUsers = response.body().getData();
+                        updateUserList(mUsers);
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, e.toString());
+                        showSnackbar("Что то пошло не так. :(");
+                    }
+                } else if (response.code() == 404) {
+                    showSnackbar("Неверный логин или пароль");
+
+                    Intent loginIntent = new Intent(UserListActivity.this, AuthActivity.class);
+                    startActivity(loginIntent);
+
+                    UserListActivity.this.finish();
+                } else {
+                    showSnackbar("Все пропало!");
                 }
             }
 
@@ -139,7 +155,6 @@ public class UserListActivity extends AppCompatActivity implements SearchView.On
                         startActivity(new Intent(UserListActivity.this, MainActivity.class));
                         break;
                     case R.id.team_menu:
-                        startActivity(new Intent(UserListActivity.this, UserListActivity.class));
                         break;
                 }
 
@@ -150,6 +165,7 @@ public class UserListActivity extends AppCompatActivity implements SearchView.On
     }
 
     private void setupToolbar() {
+        mToolbar.setTitle("Команда");
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
 

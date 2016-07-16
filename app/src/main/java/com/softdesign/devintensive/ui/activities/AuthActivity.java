@@ -109,10 +109,13 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
     private void signIn() {
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            showProgress();
             Call<UserModelRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
             call.enqueue(new Callback<UserModelRes>() {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    hideProgress();
+
                     if (response.code() == 200) {
                         loginSuccess(response.body());
                     } else if (response.code() == 404) {

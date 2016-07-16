@@ -1,15 +1,18 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,6 +49,23 @@ public class ProfileUserActivity extends BaseActivity {
     @BindView(R.id.repositories_list)
     ListView mRepoListView;
 
+    public static void setMaxHeightOfListView(ListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+
+        View view = adapter.getView(0, null, listView);
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+
+        int totalHeight = view.getMeasuredHeight() * adapter.getCount();
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + listView.getDividerHeight() * (adapter.getCount() - 1);
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +96,7 @@ public class ProfileUserActivity extends BaseActivity {
         mRepoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 15.07.2016 просмотр репозитория по intent.ACIION_VIEW
-                Snackbar.make(mCollapsingToolbarLayout, "Репозиторий " + repositories.get(position), Snackbar.LENGTH_LONG).show();
+                openLinkWeb(repositories.get(position));
             }
         });
 
@@ -95,5 +114,25 @@ public class ProfileUserActivity extends BaseActivity {
                 .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
                 .centerInside()
                 .into(mProfileImage);
+
+        setMaxHeightOfListView(mRepoListView);
+    }
+
+    /**
+     * Запустить веб-браузер для просмотра ссылки
+     *
+     * @param link - ссылка
+     */
+    private void openLinkWeb(String link) {
+        if (link.toLowerCase().contains("http://")) {
+            link = link.replaceAll("http://", "");
+        } else if (link.toLowerCase().contains("http://")) {
+            link = link.replaceAll("http://", "");
+        }
+
+        if (!link.equals("")) {
+            Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
+            startActivity(openLinkIntent);
+        }
     }
 }
