@@ -407,8 +407,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackbar(item.getTitle().toString());
                 item.setChecked(true);
+
+                switch (item.getItemId()) {
+                    case R.id.user_profile_menu:
+                        break;
+                    case R.id.team_menu:
+                        startActivity(new Intent(MainActivity.this, UserListActivity.class));
+                        break;
+                }
+
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
                 return false;
             }
@@ -547,8 +555,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param link - ссылка
      */
     private void openLinkWeb(String link) {
-        Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
-        startActivity(openLinkIntent);
+        if (link.toLowerCase().contains("http://")) {
+            link = link.replaceAll("http://", "");
+        } else if (link.toLowerCase().contains("http://")) {
+            link = link.replaceAll("http://", "");
+        }
+
+        if (!link.equals("")) {
+            Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
+            startActivity(openLinkIntent);
+        }
     }
 
     /**

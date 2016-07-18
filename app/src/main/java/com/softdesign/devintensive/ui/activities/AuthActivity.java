@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,81 +59,15 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_auth);
         Log.d(TAG, "onCreate");
 
+        ButterKnife.bind(this);
+
         mDataManager = DataManager.getInstance();
-    }
-
-    /**
-     * метод вызывается при старте активити перед моментом того как UI станет доступен пользователю.
-     * как правило, в данном методе происходит регистрация подписки на события, остановка которых
-     * была произведена в методе onStop()
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
-    }
-
-    /**
-     * метод вызывается когда активити становится доступна пользователю для взаимодействия.
-     * в данном методе, как правило происходит запуск анимаций/аудио/видео/запуск BroadcastReceiver,
-     * необходимых для реализации UI логики/запуска выполнения потоков и т.п.
-     * метод должен быть максимально легковесным для максимальной отзывчивости UI
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-    }
-
-    /**
-     * метод вызывается когда текущая активити теряет фокус, но остается видимой (всплытие диалогового
-     * окна/частичное перекрытие другой активити и т.д.)
-     * в данном методе реализуется сохранение легковесных UI данных/анимаций/аудио/видео и т.л.)
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
-
-    /**
-     * метод вызывается когда активити становится невидимым для пользователя.
-     * в данном методе происходит отписка от событий, остановка сложных анимаций, сложные операции
-     * по сохранению данных/прерывание запущенных потоков и т.п.
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
-    }
-
-    /**
-     * метод вызывается при окончании работы активити (когда это происходит системно или после
-     * вызова метода finish()
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
-
-    /**
-     * метод вызывается при рестарте активити/возобновлении работы после вызоыва метода onStop()
-     * в данном методе реализуется специфическая бизнес-логика, которая должна быть реализована именно
-     * при рестарте активности - например, запрос к серверу, который необходимо вызывать при
-     * возращении из другой активности (обновление данных, подписка на определенное событие
-     * проинициализированное на другом экране/специфическая бизнес-логика, завязанная именно
-     * на перезапуск активити
-     */
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart");
     }
 
     @Override
     @OnClick({R.id.login_btn, R.id.remember_txt})
     public void onClick(View v) {
+        Log.d(TAG, "onClick");
         switch (v.getId()) {
             case R.id.login_btn:
                 signIn();
@@ -174,10 +109,13 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
     private void signIn() {
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            showProgress();
             Call<UserModelRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
             call.enqueue(new Callback<UserModelRes>() {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    hideProgress();
+
                     if (response.code() == 200) {
                         loginSuccess(response.body());
                     } else if (response.code() == 404) {
