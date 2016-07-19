@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -47,7 +46,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
-                        android:text="@string/login_frame_title"
+                        android:text="@string/login_frame.title"
                         android:textColor="@color/color_accent"
                         android:textSize="@dimen/font_medial_20"/>
                 </LinearLayout>
@@ -64,7 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-condensed"
-                        android:hint="@string/login_frame_email_hint"
+                        android:hint="@string/login_frame.email.hint"
                         android:inputType="textEmailAddress"
                         android:text="@string/email_default_value"
                         android:textColor="@color/black"

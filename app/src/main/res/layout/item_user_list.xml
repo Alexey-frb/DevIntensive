@@ -14,8 +14,10 @@
         android:orientation="vertical">
 
         <FrameLayout
+            android:id="@+id/profile_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <com.softdesign.devintensive.ui.views.AspectRatioImageView
                 android:id="@+id/user_photo_img"
@@ -23,7 +25,11 @@
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:src="@drawable/user_photo"
-                app:aspect_ratio="1.78"/>
+                app:aspect_ratio="1.78"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                />
 
             <TextView
                 android:id="@+id/user_full_name_txt"
