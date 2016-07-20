@@ -157,7 +157,7 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
     protected final boolean isEntityUpdateable() {
         return true;
     }
-
+    
     /** Internal query to resolve the "repositories" to-many relationship of User. */
     public List<Repository> _queryUser_Repositories(String userRemoteId) {
         synchronized (this) {

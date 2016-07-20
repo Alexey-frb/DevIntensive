@@ -205,7 +205,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
                 mBus.post(getString(R.string.error_network_not_available));
             }
         } else {
-            mBus.post(getString(R.string.error_incorrect_token));
+            mBus.post("");
         }
     }
 

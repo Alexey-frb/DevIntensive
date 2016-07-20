@@ -82,7 +82,7 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getRemoteId());
-
+ 
         Long sortId = entity.getSortId();
         if (sortId != null) {
             stmt.bindLong(3, sortId);
@@ -113,7 +113,7 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getRemoteId());
-
+ 
         Long sortId = entity.getSortId();
         if (sortId != null) {
             stmt.bindLong(3, sortId);
