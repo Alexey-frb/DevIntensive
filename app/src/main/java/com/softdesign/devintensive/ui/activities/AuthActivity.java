@@ -3,8 +3,6 @@ package com.softdesign.devintensive.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
@@ -19,14 +17,13 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelRes;
-import com.softdesign.devintensive.data.storage.models.Repository;
-import com.softdesign.devintensive.data.storage.models.RepositoryDao;
-import com.softdesign.devintensive.data.storage.models.User;
-import com.softdesign.devintensive.data.storage.models.UserDao;
-import com.softdesign.devintensive.utils.AppConfig;
+import com.softdesign.devintensive.data.network.res.UserModelGetRes;
+import com.softdesign.devintensive.data.network.res.UserModelPostRes;
+import com.softdesign.devintensive.data.storage.SaveUsersInDb;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +39,7 @@ import retrofit2.Response;
  * Авторизация пользователя
  */
 public class AuthActivity extends BaseActivity implements View.OnClickListener {
+
     public static final String TAG = ConstantManager.TAG_PREFIX + "AuthActivity";
 
     @BindView(R.id.main_coordinator_container)
@@ -58,12 +56,9 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
     EditText mPassword;
 
     private ChronosConnector mConnector;
+    private Bus mBus;
 
     private DataManager mDataManager;
-    private RepositoryDao mRepositoryDao;
-    private UserDao mUserDao;
-
-    private boolean isLoginTokenSuccess;
 
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
@@ -74,25 +69,18 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mConnector = new ChronosConnector();
-        mConnector.onCreate(this, savedInstanceState);
         setContentView(R.layout.activity_auth);
         Log.d(TAG, "onCreate");
 
-        ButterKnife.bind(this);
+        mBus = new Bus();
+        mBus.register(AuthActivity.this);
 
-        //mAuthorizationBox.setVisibility(View.GONE);
+        mConnector = new ChronosConnector();
+        mConnector.onCreate(this, savedInstanceState);
 
         mDataManager = DataManager.getInstance();
 
-        mUserDao = mDataManager.getDaoSession().getUserDao();
-        mRepositoryDao = mDataManager.getDaoSession().getRepositoryDao();
-
-        //signInByToken();
-
-        //if (!isLoginTokenSuccess) {
-        //    mAuthorizationBox.setVisibility(View.VISIBLE);
-        //}
+        signInByToken();
     }
 
     @Override
@@ -103,17 +91,17 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mConnector.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState");
-    }
-
-    @Override
     protected void onPause() {
         mConnector.onPause();
         super.onPause();
         Log.d(TAG, "onPause");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mConnector.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
     }
 
     @Override
@@ -132,173 +120,230 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
-     * Отобразить снекбар
+     * Отобразить снекбар с сообщением
      *
      * @param message - сообщение
      */
-
     private void showSnackbar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Открыть сайт с формой запроса нового пароля
+     */
     private void rememberPassword() {
-        Intent rememberIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.frame_login_url_forgot_pass)));
+        Intent rememberIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.login_frame_url_forgot_pass)));
         startActivity(rememberIntent);
     }
 
-    private void loginSuccess(UserModelRes userModel) {
-        mDataManager.getPreferencesManager().saveAuthToken(userModel.getData().getToken());
-        mDataManager.getPreferencesManager().saveUserId(userModel.getData().getUser().getId());
-
-        saveUserValues(userModel);
-        saveUserFields(userModel);
-        saveUserData(userModel);
-
-        saveUserInDb();
-
-        mDataManager.getPreferencesManager().saveUserPhoto(Uri.parse(userModel.getData().getUser().getPublicInfo().getPhoto()));
-        mDataManager.getPreferencesManager().saveUserAvatar(Uri.parse(userModel.getData().getUser().getPublicInfo().getAvatar()));
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
-                startActivity(loginIntent);
-            }
-        }, AppConfig.START_DELAY);
-    }
-
+    /**
+     * Вход на сайт с логином и паролем, запрос информации о пользователе
+     */
     private void signIn() {
+        Log.d(TAG, "signIn");
+
+        showProgress();
+
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
-            //showProgress();
-            Call<UserModelRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
-            call.enqueue(new Callback<UserModelRes>() {
+            Call<UserModelPostRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
+            call.enqueue(new Callback<UserModelPostRes>() {
                 @Override
-                public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                public void onResponse(Call<UserModelPostRes> call, Response<UserModelPostRes> response) {
                     if (response.code() == 200) {
-                        loginSuccess(response.body());
+                        mDataManager.getPreferencesManager().saveAuthToken(response.body().getData().getToken());
+                        mDataManager.getPreferencesManager().saveUserId(response.body().getData().getUser().getId());
+                        loginSuccess(response.body().getData().getUser());
                     } else if (response.code() == 404) {
-                        showSnackbar("Неверный логин или пароль!");
+                        mBus.post(getString(R.string.error_invalid_login_or_password));
                     } else {
-                        showSnackbar("Нет ответа от сервера!");
+                        mBus.post(getString(R.string.error_not_response_from_server));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<UserModelRes> call, Throwable t) {
-                    // TODO: 12.07.2016 обработать ошибки ретрофита
-                    Log.e(TAG, "onFailure:");
+                public void onFailure(Call<UserModelPostRes> call, Throwable t) {
+                    Log.e(TAG, "onFailureSignIn:" + t.getMessage());
+                    mBus.post(t.getMessage());
                 }
             });
         } else {
-            showSnackbar("Сеть на данный момент не доступна, попробуйте позже!");
+            hideProgress();
+            mBus.post(getString(R.string.error_network_not_available));
         }
     }
 
+    /**
+     * Вход на сайт по токену, запрос информации о пользователе
+     */
     private void signInByToken() {
-        isLoginTokenSuccess = false;
-        //if (!mDataManager.getPreferencesManager().getAuthToken().equals("null")) {
-        if (NetworkStatusChecker.isNetworkAvailable(this)) {
-            Call<UserModelRes> call = mDataManager.loginToken(mDataManager.getPreferencesManager().getUserId());
-            call.enqueue(new Callback<UserModelRes>() {
-                @Override
-                public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
-                    if (response.code() == 200) {
-                        loginSuccess(response.body());
-                        isLoginTokenSuccess = true;
-                    } else if (response.code() == 401) {
-                        showSnackbar("Невалидный токен!");
-                    } else {
-                        showSnackbar("Нет ответа от сервера!");
-                    }
-                }
+        Log.d(TAG, "signInByToken");
 
-                @Override
-                public void onFailure(Call<UserModelRes> call, Throwable t) {
-                    showSnackbar("Нет ответа от сервера!");
-                }
-            });
+        showProgress();
+
+        if (!mDataManager.getPreferencesManager().getAuthToken().equals("null") && !mDataManager.getPreferencesManager().getUserId().equals("null")) {
+            if (NetworkStatusChecker.isNetworkAvailable(this)) {
+                Call<UserModelGetRes> call = mDataManager.loginToken(mDataManager.getPreferencesManager().getUserId());
+                call.enqueue(new Callback<UserModelGetRes>() {
+                    @Override
+                    public void onResponse(Call<UserModelGetRes> call, Response<UserModelGetRes> response) {
+                        if (response.code() == 200) {
+                            loginSuccess(response.body().getData());
+                        } else if (response.code() == 401) {
+                            mBus.post(getString(R.string.error_incorrect_token));
+                        } else {
+                            mBus.post(getString(R.string.error_not_response_from_server));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserModelGetRes> call, Throwable t) {
+                        Log.e(TAG, "onFailureSignInByToken:" + t.getMessage());
+                        mBus.post(t.getMessage());
+                    }
+                });
+            } else {
+                mBus.post(getString(R.string.error_network_not_available));
+            }
         } else {
-            showSnackbar("Сеть на данный момент не доступна, попробуйте позже!");
+            mBus.post(getString(R.string.error_incorrect_token));
         }
-        //}
     }
 
-    private void saveUserValues(UserModelRes userModel) {
-        int[] userValues = {
-                userModel.getData().getUser().getProfileValues().getRating(),
-                userModel.getData().getUser().getProfileValues().getLinesCode(),
-                userModel.getData().getUser().getProfileValues().getProjects()
+    /**
+     * Сохранить данные о пользователе в SharedPreferences и в локальную базу данных
+     *
+     * @param userModel - данные пользователя
+     */
+    private void loginSuccess(UserModelGetRes.Data userModel) {
+        Log.d(TAG, "loginSuccess");
+
+        // Сохранение в SharedPreferences
+        saveUserProfileData(userModel);
+        saveUserInfoData(userModel);
+        saveUserFullName(userModel);
+
+        mDataManager.getPreferencesManager().saveUserPhoto(Uri.parse(userModel.getPublicInfo().getPhoto()));
+        mDataManager.getPreferencesManager().saveUserAvatar(Uri.parse(userModel.getPublicInfo().getAvatar()));
+
+        // Сохрание в локальную базу данных
+        saveUserInDb();
+    }
+
+    /**
+     * Сохранить в SharedPreferences данные о рейтинге, кол-ве проектов и строках кода
+     *
+     * @param userModel - данные пользователя
+     */
+    private void saveUserProfileData(UserModelGetRes.Data userModel) {
+        int[] userProfile = {
+                userModel.getProfileValues().getRating(),
+                userModel.getProfileValues().getLinesCode(),
+                userModel.getProfileValues().getProjects()
         };
 
-        mDataManager.getPreferencesManager().saveUserProfileValues(userValues);
+        mDataManager.getPreferencesManager().saveUserProfileData(userProfile);
     }
 
-    private void saveUserFields(UserModelRes userModel) {
-        List<String> userData = new ArrayList<>();
-        userData.add(userModel.getData().getUser().getContacts().getPhone());
-        userData.add(userModel.getData().getUser().getContacts().getEmail());
-        userData.add(userModel.getData().getUser().getContacts().getVk());
-        userData.add(userModel.getData().getUser().getRepositories().getRepo().get(0).getGit());
-        userData.add(userModel.getData().getUser().getPublicInfo().getBio());
+    /**
+     * Сохранить в SharedPreferences данные о пользователе: телефон, е-mail, vk, repository
+     *
+     * @param userModel - данные о пользователе
+     */
+    private void saveUserInfoData(UserModelGetRes.Data userModel) {
+        List<String> userInfo = new ArrayList<>();
+        userInfo.add(userModel.getContacts().getPhone());
+        userInfo.add(userModel.getContacts().getEmail());
+        userInfo.add(userModel.getContacts().getVk());
+        userInfo.add(userModel.getRepositories().getRepo().get(0).getGit());
+        userInfo.add(userModel.getPublicInfo().getBio());
 
-        mDataManager.getPreferencesManager().saveUserProfileData(userData);
+        mDataManager.getPreferencesManager().saveUserInfoData(userInfo);
     }
 
-    private void saveUserData(UserModelRes userModel) {
-        List<String> userData = new ArrayList<>();
-        userData.add(userModel.getData().getUser().getFirstName());
-        userData.add(userModel.getData().getUser().getSecondName());
+    /**
+     * Сохранить в SharedPreferences полное имя пользователя
+     *
+     * @param userModel - данные о пользователе
+     */
+    private void saveUserFullName(UserModelGetRes.Data userModel) {
+        List<String> userFullName = new ArrayList<>();
+        userFullName.add(userModel.getFirstName());
+        userFullName.add(userModel.getSecondName());
 
-        mDataManager.getPreferencesManager().saveUserData(userData);
+        mDataManager.getPreferencesManager().saveUserFullName(userFullName);
     }
 
+    /**
+     * Сохранить данные о пользователе в локальную базу данных
+     */
     private void saveUserInDb() {
-        Call<UserListRes> call = mDataManager.getUserListFromNetwork();
+        Log.d(TAG, "saveUserInDb");
 
-        call.enqueue(new Callback<UserListRes>() {
-            @Override
-            public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
-                try {
-                    if (response.code() == 200) {
-                        List<Repository> allRepositories = new ArrayList<Repository>();
-                        List<User> allUsers = new ArrayList<User>();
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            Call<UserListRes> call = mDataManager.getUserListFromNetwork();
 
-                        for (UserListRes.UserData userRes : response.body().getData()) {
-                            allRepositories.addAll(getRepoListFromUserRes(userRes));
-                            allUsers.add(new User(userRes));
+            call.enqueue(new Callback<UserListRes>() {
+                @Override
+                public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
+                    try {
+                        if (response.code() == 200) {
+                            mConnector.runOperation(new SaveUsersInDb(response), false);
+                        } else {
+                            mBus.post(getString(R.string.error_user_list_not_available));
+                            Log.e(TAG, "onResponseSaveUserInDb: " + String.valueOf(response.errorBody().source()));
                         }
-
-                        mRepositoryDao.insertOrReplaceInTx(allRepositories);
-                        mUserDao.insertOrReplaceInTx(allUsers);
-
-                    } else {
-                        showSnackbar("Список пользователей не может быть получен");
-                        Log.e(TAG, "onResponse: " + String.valueOf(response.errorBody().source()));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onResponseSaveUserInDb: " + e.toString());
+                        mBus.post(e.toString());
                     }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, e.toString());
-                    showSnackbar("Что то пошло не так. :(");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<UserListRes> call, Throwable t) {
-                // TODO: 15.07.2016 обработать ошибки
-            }
-        });
+                @Override
+                public void onFailure(Call<UserListRes> call, Throwable t) {
+                    Log.e(TAG, "onFailureSaveUserInDb: " + t.getMessage());
+                    mBus.post(t.getMessage());
+                }
+            });
+        } else {
+            mBus.post(getString(R.string.error_network_not_available));
+        }
     }
 
-    private List<Repository> getRepoListFromUserRes(UserListRes.UserData userData) {
-        final String userId = userData.getId();
+    /**
+     * Вызывается по завершению сохранения в локальную базу данных
+     *
+     * @param result - результат
+     */
+    public void onOperationFinished(final SaveUsersInDb.Result result) {
+        if (result.isSuccessful()) {
+            Log.d(TAG, "onOperationFinished: successful!");
 
-        List<Repository> repositories = new ArrayList<>();
-        for (UserModelRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
-            repositories.add(new Repository(repositoryRes, userId));
+            hideProgress();
+
+            Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
+            finish();
+            startActivity(loginIntent);
+        } else {
+            Log.e(TAG, "onOperationFinished: error " + result.getErrorMessage());
         }
+    }
 
-        return repositories;
+    /**
+     * Вызывается при вызове mBus.post (в случае ошибки при запросе на сервер)
+     *
+     * @param error - текст ошибки
+     */
+    @Subscribe
+    public void answerAvailable(String error) {
+        hideProgress();
+
+        ButterKnife.bind(this);
+
+        mAuthorizationBox.setVisibility(View.VISIBLE);
+
+        if (!error.isEmpty()) {
+            showSnackbar(error);
+        }
     }
 }

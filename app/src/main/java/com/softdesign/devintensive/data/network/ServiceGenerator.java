@@ -14,6 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
+
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder sBuilder =
@@ -26,16 +27,20 @@ public class ServiceGenerator {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        httpClient.addInterceptor(new HeaderInterceptor());
-        httpClient.addInterceptor(logging);
+        httpClient.cache(new Cache(DevIntensiveApplication.getContext().getCacheDir(), Integer.MAX_VALUE));
+
         httpClient.connectTimeout(AppConfig.MAX_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
         httpClient.readTimeout(AppConfig.MAX_READ_TIMEOUT, TimeUnit.MILLISECONDS);
-        httpClient.cache(new Cache(DevIntensiveApplication.getContext().getCacheDir(), Integer.MAX_VALUE));
+
+        httpClient.addInterceptor(new HeaderInterceptor());
+        httpClient.addInterceptor(logging);
+
         httpClient.addNetworkInterceptor(new StethoInterceptor());
 
         Retrofit retrofit = sBuilder
                 .client(httpClient.build())
                 .build();
+
         return retrofit.create(serviceClass);
     }
 }

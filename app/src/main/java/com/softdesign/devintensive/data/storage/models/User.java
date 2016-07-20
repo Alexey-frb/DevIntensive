@@ -23,6 +23,8 @@ public class User {
     @Unique
     private String remoteId;
 
+    private Long sortId;
+
     private String photo;
 
     @NotNull
@@ -52,13 +54,11 @@ public class User {
     @Generated(hash = 1507654846)
     private transient UserDao myDao;
 
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    public User(UserListRes.UserData userRes) {
+    public User(UserListRes.UserData userRes, Long number) {
         remoteId = userRes.getId();
         photo = userRes.getPublicInfo().getPhoto();
         fullName = userRes.getFullName();
@@ -67,6 +67,7 @@ public class User {
         codeLines = userRes.getProfileValues().getLinesCode();
         projects = userRes.getProfileValues().getProjects();
         bio = userRes.getPublicInfo().getBio();
+        sortId = number;
     }
 
     /**
@@ -105,9 +106,7 @@ public class User {
         myDao.delete(this);
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 438307964)
     public synchronized void resetRepositories() {
         repositories = null;
@@ -135,9 +134,7 @@ public class User {
         return repositories;
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 2059241980)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
@@ -200,6 +197,14 @@ public class User {
         this.photo = photo;
     }
 
+    public Long getSortId() {
+        return this.sortId;
+    }
+
+    public void setSortId(Long sortId) {
+        this.sortId = sortId;
+    }
+
     public String getRemoteId() {
         return this.remoteId;
     }
@@ -216,12 +221,12 @@ public class User {
         this.id = id;
     }
 
-    @Generated(hash = 1023608416)
-    public User(Long id, @NotNull String remoteId, String photo,
-                @NotNull String fullName, @NotNull String searchName, int rating,
-                int codeLines, int projects, String bio) {
+    @Generated(hash = 358192652)
+    public User(Long id, @NotNull String remoteId, Long sortId, String photo, @NotNull String fullName,
+                @NotNull String searchName, int rating, int codeLines, int projects, String bio) {
         this.id = id;
         this.remoteId = remoteId;
+        this.sortId = sortId;
         this.photo = photo;
         this.fullName = fullName;
         this.searchName = searchName;

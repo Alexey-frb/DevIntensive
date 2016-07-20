@@ -1,6 +1,7 @@
 package com.softdesign.devintensive.data.managers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.softdesign.devintensive.data.network.PicassoCache;
 import com.softdesign.devintensive.data.network.RestService;
@@ -8,10 +9,12 @@ import com.softdesign.devintensive.data.network.ServiceGenerator;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
 import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.network.res.UserModelGetRes;
+import com.softdesign.devintensive.data.network.res.UserModelPostRes;
 import com.softdesign.devintensive.data.storage.models.DaoSession;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDao;
+import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.DevIntensiveApplication;
 import com.squareup.picasso.Picasso;
 
@@ -22,19 +25,21 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 
 public class DataManager {
+    public static final String TAG = ConstantManager.TAG_PREFIX + "DataManager";
 
     private static DataManager INSTANCE = null;
-    private Picasso mPicasso;
 
     private PreferencesManager mPreferencesManager;
     private Context mContext;
-    private RestService mRestService;
 
+    private RestService mRestService;
+    private Picasso mPicasso;
     private DaoSession mDaoSession;
 
     private DataManager() {
         mPreferencesManager = new PreferencesManager();
         mContext = DevIntensiveApplication.getContext();
+
         mRestService = ServiceGenerator.createService(RestService.class);
         mPicasso = new PicassoCache(mContext).getPicassoInstance();
         mDaoSession = DevIntensiveApplication.getDaoSession();
@@ -64,11 +69,11 @@ public class DataManager {
     }
 
     //region --- Network ---
-    public Call<UserModelRes> loginUser(UserLoginReq userLoginReq) {
+    public Call<UserModelPostRes> loginUser(UserLoginReq userLoginReq) {
         return mRestService.loginUser(userLoginReq);
     }
 
-    public Call<UserModelRes> loginToken(String userId){
+    public Call<UserModelGetRes> loginToken(String userId) {
         return mRestService.loginToken(userId);
     }
 
@@ -83,11 +88,9 @@ public class DataManager {
     public Call<UserListRes> getUserListFromNetwork() {
         return mRestService.getUserList();
     }
-
     //endregion
 
     //region --- Database ---
-
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
@@ -101,8 +104,9 @@ public class DataManager {
                     .orderDesc(UserDao.Properties.Rating)
                     .build()
                     .list();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "getUserListByName: " + e.getMessage());
         }
 
         return userList;

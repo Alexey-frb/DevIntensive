@@ -38,9 +38,10 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
-import com.softdesign.devintensive.utils.CircleImageView;
+import com.softdesign.devintensive.ui.views.CircleImageView;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.EditTextWatcher;
+import com.softdesign.devintensive.utils.NetworkStatusChecker;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -66,6 +67,7 @@ import retrofit2.Response;
  * Основная логика приложения
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
+
     public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
 
     @BindView(R.id.main_coordinator_container)
@@ -93,7 +95,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     EditText mUserVk;
     @BindView(R.id.git_et)
     EditText mUserGit;
-    @BindView(R.id.info_et)
+    @BindView(R.id.bio_et)
     EditText mUserBio;
 
     @BindView(R.id.call_phone_iv)
@@ -105,19 +107,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.open_git_iv)
     ImageView mOpenGit;
 
-    @BindViews({R.id.phone_et, R.id.email_et, R.id.vk_et, R.id.git_et, R.id.info_et})
+    @BindViews({R.id.phone_et, R.id.email_et, R.id.vk_et, R.id.git_et, R.id.bio_et})
     List<EditText> mUserInfoViews;
 
     @BindViews({R.id.call_phone_iv, R.id.send_email_iv, R.id.open_vk_iv, R.id.open_git_iv})
     List<ImageView> mUserActions;
 
-    @BindView(R.id.info_raiting)
+    @BindView(R.id.rating_txt)
     TextView mUserValueRating;
-    @BindView(R.id.info_rows_code)
+    @BindView(R.id.code_lines_txt)
     TextView mUserValueCodeLines;
-    @BindView(R.id.info_project)
+    @BindView(R.id.projects_txt)
     TextView mUserValueProjects;
-    @BindViews({R.id.info_raiting, R.id.info_rows_code, R.id.info_project})
+    @BindViews({R.id.rating_txt, R.id.code_lines_txt, R.id.projects_txt})
     List<TextView> mUserValueViews;
 
     private int mCurrentEditMode = 0;
@@ -136,12 +138,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
      * активности после его уничтожения.
-     * <p/>
+     * <p>
      * в данном методе инициализируется/производится:
      * - UI пользовательский интерфейс (статика)
      * - инициализация статических данных активити
      * - связь данных со списками (инициализация адаптеров)
-     * <p/>
+     * <p>
      * Не запускать длительные операции по работе с данными в onCreate() !!!
      *
      * @param savedInstanceState - объект со значениями, сохраненными в Bundle - состояние UI
@@ -157,8 +159,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDataManager = DataManager.getInstance();
 
         setupToolbar();
-        initUserFields();
-        initUserInfoValue();
+        initUserInfoData();
+        initUserProfileData();
         setupDrawer();
 
         mUserPhoneWatcher = new EditTextWatcher(this, mUserPhone);
@@ -169,8 +171,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
-                .centerInside()
+                .fit()
+                .centerCrop()
                 .placeholder(R.drawable.user_bg)
                 .into(mProfileImage);
 
@@ -404,7 +406,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        assert navigationView != null;
         navigationView.setCheckedItem(R.id.user_profile_menu);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -414,7 +418,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.id.user_profile_menu:
                         break;
                     case R.id.team_menu:
-                        startActivity(new Intent(MainActivity.this, UserListActivity.class));
+                        Intent teamActivity = new Intent(MainActivity.this, UserListActivity.class);
+                        finish();
+                        startActivity(teamActivity);
+                        break;
+                    case R.id.exit_menu:
+                        mDataManager.getPreferencesManager().saveAuthToken("");
+                        mDataManager.getPreferencesManager().saveUserId("");
+                        Intent authActivity = new Intent(MainActivity.this, AuthActivity.class);
+                        finish();
+                        startActivity(authActivity);
                         break;
                 }
 
@@ -425,15 +438,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
         TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
-        userName.setText(mDataManager.getPreferencesManager().getUserName());
+        userName.setText(mDataManager.getPreferencesManager().getFullName());
         userEmail.setText(mUserMail.getText());
 
         CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
         Picasso.with(this)
                 .load(mDataManager.getPreferencesManager().loadUserAvatar())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .resize(getResources().getDimensionPixelSize(R.dimen.avatar_size), getResources().getDimensionPixelSize(R.dimen.avatar_size))
-                .centerInside()
+                .fit()
+                .centerCrop()
                 .placeholder(R.drawable.ic_account)
                 .into(userAvatar);
     }
@@ -489,35 +502,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.white));
 
-            saveUserFields();
+            saveUserInfoData();
         }
     }
 
     /**
      * Загрузить пользовательские данные
      */
-    private void initUserFields() {
-        List<String> userData = mDataManager.getPreferencesManager().loadUserProfileData();
-        for (int i = 0; i < userData.size(); i++) {
-            mUserInfoViews.get(i).setText(userData.get(i));
+    private void initUserInfoData() {
+        List<String> userInfo = mDataManager.getPreferencesManager().loadUserInfoData();
+        for (int i = 0; i < userInfo.size(); i++) {
+            mUserInfoViews.get(i).setText(userInfo.get(i));
         }
     }
 
     /**
      * Сохранить пользоательские данные
      */
-    private void saveUserFields() {
-        List<String> userData = new ArrayList<>();
+    private void saveUserInfoData() {
+        List<String> userInfo = new ArrayList<>();
         for (EditText userFieldView : mUserInfoViews) {
-            userData.add(userFieldView.getText().toString());
+            userInfo.add(userFieldView.getText().toString());
         }
-        mDataManager.getPreferencesManager().saveUserProfileData(userData);
+        mDataManager.getPreferencesManager().saveUserInfoData(userInfo);
     }
 
-    private void initUserInfoValue() {
-        List<String> userData = mDataManager.getPreferencesManager().loadUserProfileValues();
-        for (int i = 0; i < userData.size(); i++) {
-            mUserValueViews.get(i).setText(userData.get(i));
+    private void initUserProfileData() {
+        List<String> userProfile = mDataManager.getPreferencesManager().loadUserProfileData();
+        for (int i = 0; i < userProfile.size(); i++) {
+            mUserValueViews.get(i).setText(userProfile.get(i));
         }
     }
 
@@ -546,7 +559,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         try {
             startActivity(Intent.createChooser(sendMailIntent, "Send Email"));
         } catch (android.content.ActivityNotFoundException ex) {
-            showSnackbar("Приложение для работы с почтой отсутствует!");
+            showSnackbar(getString(R.string.error_app_email_not_available));
         }
     }
 
@@ -575,7 +588,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         takeGalleryIntent.setType("image/*");
-        startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_choose_message)), ConstantManager.REQUEST_GALLERY_PICTURE);
+        startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_dialog_choose_message)), ConstantManager.REQUEST_GALLERY_PICTURE);
     }
 
     /**
@@ -592,7 +605,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mPhotoFile = createImageFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                // TODO: 08.07.2016 обработать ошибку
+                Log.e(TAG, "loadPhotoFromCamera: " + e.getMessage());
             }
 
             if (mPhotoFile != null) {
@@ -606,8 +619,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
 
-            Snackbar.make(mCoordinatorLayout, "Для корректной работы приложения необходимо дать требуемые разрешения", Snackbar.LENGTH_LONG)
-                    .setAction("Разрешить", new View.OnClickListener() {
+            Snackbar.make(mCoordinatorLayout, R.string.info_give_permission, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.info_action_granted, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             openApplicationSettings();
@@ -658,7 +671,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case ConstantManager.LOAD_PROFILE_PHOTO:
-                String[] selectItems = {getString(R.string.user_profile_dialog_gallery), getString(R.string.user_profile_dialog_camera), getString(R.string.user_profile_dialog_cancel)};
+                String[] selectItems = {getString(R.string.user_profile_dialog_gallery),
+                        getString(R.string.user_profile_dialog_camera),
+                        getString(R.string.user_profile_dialog_cancel)};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.user_profile_dialog_title));
@@ -734,40 +749,70 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startActivityForResult(appSettingsIntent, ConstantManager.PERMISSION_REQUEST_SETTINGS_CODE);
     }
 
+    /**
+     * Загрузить фото на сервер
+     *
+     * @param file - фото
+     */
     private void uploadPhoto(File file) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
-        Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
-                mDataManager.getPreferencesManager().getUserId(), body);
-        call.enqueue(new Callback<UploadPhotoRes>() {
-            @Override
-            public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
-                //// TODO: 13.07.2016 реализовать получение колбека
-            }
 
-            @Override
-            public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
-                //// TODO: 13.07.2016 реализовать получение ошибки
-            }
-        });
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
+                    mDataManager.getPreferencesManager().getUserId(), body);
+            call.enqueue(new Callback<UploadPhotoRes>() {
+                @Override
+                public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
+                    if (response.code() == 200) {
+                        showSnackbar(getString(R.string.user_profile_photo_upload_ok));
+                    } else {
+                        showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
+                    Log.e(TAG, "onFailureUploadPhoto:" + t.getMessage());
+                    showSnackbar("t.getMessage()");
+                }
+            });
+        } else {
+            showSnackbar(getString(R.string.error_network_not_available));
+        }
     }
 
+    /**
+     * Загрузить аватар на сервер
+     *
+     * @param file - фото
+     */
     private void uploadAvatar(File file) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), requestFile);
-        Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
-                mDataManager.getPreferencesManager().getUserId(), body);
-        call.enqueue(new Callback<UploadPhotoRes>() {
-            @Override
-            public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
-                //// TODO: 13.07.2016 реализовать получение колбека
-            }
 
-            @Override
-            public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
-                //// TODO: 13.07.2016 реализовать получение ошибки
-            }
-        });
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            Call<UploadPhotoRes> call = mDataManager.getRestService().uploadPhoto(
+                    mDataManager.getPreferencesManager().getUserId(), body);
+            call.enqueue(new Callback<UploadPhotoRes>() {
+                @Override
+                public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
+                    if (response.code() == 200) {
+                        showSnackbar(getString(R.string.user_profile_photo_upload_ok));
+                    } else {
+                        showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UploadPhotoRes> call, Throwable t) {
+                    Log.e(TAG, "onFailureUploadPhoto:" + t.getMessage());
+                    showSnackbar("t.getMessage()");
+                }
+            });
+        } else {
+            showSnackbar(getString(R.string.error_network_not_available));
+        }
     }
 
     private File getFileFromUri(Uri uri) {

@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  * Проверка ввода для текстовых полей
  */
 public class EditTextWatcher implements TextWatcher {
+
     private static final String phonePattern = "^\\d{11,20}$";
     private static final String emailPattern = "^[\\w\\.\\-]{3,}@[A-Za-z0-9\\-]{2,}\\.[A-Za-z]{2,3}$";
     private static final String vkPattern = "^vk\\.com\\/\\w{3,}$";

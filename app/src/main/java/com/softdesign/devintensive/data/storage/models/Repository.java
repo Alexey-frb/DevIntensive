@@ -1,6 +1,6 @@
 package com.softdesign.devintensive.data.storage.models;
 
-import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.network.res.UserModelGetRes;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
@@ -29,13 +29,11 @@ public class Repository {
     @Generated(hash = 332345895)
     private transient RepositoryDao myDao;
 
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    public Repository(UserModelRes.Repo repositoryRes, String userId) {
+    public Repository(UserModelGetRes.Repo repositoryRes, String userId) {
         repositoryName = repositoryRes.getGit();
         userRemoteId = userId;
         remoteId = repositoryRes.getId();
@@ -77,9 +75,7 @@ public class Repository {
         myDao.delete(this);
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 636002579)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;

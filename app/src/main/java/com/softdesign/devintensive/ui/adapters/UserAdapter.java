@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements ItemTouchHelperAdapter {
+
     private static final String TAG = ConstantManager.TAG_PREFIX + "UsersAdapter";
 
     private Context mContext;
@@ -44,6 +45,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserAdapter.UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_list, parent, false);
+
         return new UserViewHolder(convertView, mCustomClickListener);
     }
 
@@ -52,6 +54,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(final UserAdapter.UserViewHolder holder, int position) {
         final User user = mUsers.get(position);
         final String userPhoto;
+
         if (user.getPhoto().isEmpty()) {
             userPhoto = "null";
             Log.e(TAG, "onBindViewHolder: user with name " + user.getFullName() + " has empty name");
@@ -63,14 +66,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .load(userPhoto)
                 .placeholder(holder.mDummy)
                 .error(holder.mDummy)
-
                 .fit()
                 .centerCrop()
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .into(holder.userPhoto, new Callback() {
                     @Override
                     public void onSuccess() {
-                        Log.d(TAG, "load from cache");
+                        Log.d(TAG, "load photo from cache");
                     }
 
                     @Override
@@ -79,21 +81,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 .load(userPhoto)
                                 .placeholder(holder.mDummy)
                                 .error(holder.mDummy)
-
                                 .fit()
                                 .centerCrop()
                                 .into(holder.userPhoto, new Callback() {
                                     @Override
                                     public void onSuccess() {
-
+                                        Log.d(TAG, "load photo from network");
                                     }
 
                                     @Override
                                     public void onError() {
-                                        Log.d(TAG, "Could not fetch umage");
+                                        Log.d(TAG, "Could not fetch image");
                                     }
                                 });
-
                     }
                 });
 
@@ -108,17 +108,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             holder.mBio.setVisibility(View.VISIBLE);
             holder.mBio.setText(user.getBio());
         }
-
-//        // Start a drag whenever the handle view it touched
-//        holder.mProfileFrame.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-//                    mDragStartListener.onStartDrag(holder);
-//                }
-//                return false;
-//            }
-//        });
     }
 
     @Override
@@ -128,13 +117,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        User user1 = mUsers.get(fromPosition);
+        User user2 = mUsers.get(toPosition);
+        long tmpSortId = user1.getSortId();
+        user1.setSortId(user2.getSortId());
+        user2.setSortId(tmpSortId);
+        user1.update();
+        user2.update();
+
         Collections.swap(mUsers, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+
         return true;
     }
 
     @Override
     public void onItemDismiss(int position) {
+        //DevIntensiveApplication.getDaoSession().getUserDao().delete(mUsers.get(position));
+        mUsers.get(position).delete();
+
         mUsers.remove(position);
         notifyItemRemoved(position);
     }
@@ -145,10 +146,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         protected Button mShowMore;
         protected Drawable mDummy;
 
-        protected AspectRatioImageView mProfileFrame;
-
         private CustomClickListener mListener;
 
+        @SuppressWarnings("deprecation")
         public UserViewHolder(View itemView, CustomClickListener customClickListener) {
             super(itemView);
             mListener = customClickListener;
@@ -160,8 +160,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             mProjects = (TextView) itemView.findViewById(R.id.projects_txt);
             mBio = (TextView) itemView.findViewById(R.id.bio_txt);
             mShowMore = (Button) itemView.findViewById(R.id.more_info_btn);
-
-            mProfileFrame = (AspectRatioImageView) itemView.findViewById(R.id.user_photo_img);
 
             mDummy = userPhoto.getContext().getResources().getDrawable(R.drawable.user_bg);
 

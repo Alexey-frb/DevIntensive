@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.softdesign.devintensive.R;
 
 public class AspectRatioImageView extends ImageView {
+
     private static final float DEFAULT_ASPECT_RATIO = 1.73f;
     private final float mAspectRatio;
 

@@ -33,13 +33,13 @@ public class ProfileUserActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.user_photo_img)
     ImageView mProfileImage;
-    @BindView(R.id.info_et)
+    @BindView(R.id.bio_et)
     EditText mUserBio;
-    @BindView(R.id.info_raiting)
+    @BindView(R.id.rating_txt)
     TextView mUserRating;
-    @BindView(R.id.info_rows_code)
+    @BindView(R.id.code_lines_txt)
     TextView mUserCodeLines;
-    @BindView(R.id.info_project)
+    @BindView(R.id.projects_txt)
     TextView mUserProjects;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -48,23 +48,6 @@ public class ProfileUserActivity extends BaseActivity {
 
     @BindView(R.id.repositories_list)
     ListView mRepoListView;
-
-    public static void setMaxHeightOfListView(ListView listView) {
-        ListAdapter adapter = listView.getAdapter();
-
-        View view = adapter.getView(0, null, listView);
-        view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-
-        int totalHeight = view.getMeasuredHeight() * adapter.getCount();
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + listView.getDividerHeight() * (adapter.getCount() - 1);
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +60,9 @@ public class ProfileUserActivity extends BaseActivity {
         initProfileData();
     }
 
+    /**
+     * Инициализировать тулбар
+     */
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
 
@@ -86,11 +72,15 @@ public class ProfileUserActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Загрузить данные о пользователе
+     */
     private void initProfileData() {
         UserDTO userDTO = getIntent().getParcelableExtra(ConstantManager.PARCELABLE_KEY);
 
         final List<String> repositories = userDTO.getRepositories();
         final RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, repositories);
+
         mRepoListView.setAdapter(repositoriesAdapter);
 
         mRepoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,8 +101,8 @@ public class ProfileUserActivity extends BaseActivity {
                 .load(userDTO.getPhoto())
                 .placeholder(R.drawable.user_bg)
                 .error(R.drawable.user_bg)
-                .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
-                .centerInside()
+                .fit()
+                .centerCrop()
                 .into(mProfileImage);
 
         setMaxHeightOfListView(mRepoListView);
@@ -134,5 +124,27 @@ public class ProfileUserActivity extends BaseActivity {
             Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
             startActivity(openLinkIntent);
         }
+    }
+
+    /**
+     * Установить максимальную высоту списка
+     *
+     * @param listView - список
+     */
+    public static void setMaxHeightOfListView(ListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+
+        View view = adapter.getView(0, null, listView);
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+
+        int totalHeight = view.getMeasuredHeight() * adapter.getCount();
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + listView.getDividerHeight() * (adapter.getCount() - 1);
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 }

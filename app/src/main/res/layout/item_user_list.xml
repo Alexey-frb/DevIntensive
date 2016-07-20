@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="@dimen/spacing_small_8"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="2dp">
+    app:cardCornerRadius="@dimen/login_frame_corner_radius">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,20 +16,18 @@
         <FrameLayout
             android:id="@+id/profile_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <com.softdesign.devintensive.ui.views.AspectRatioImageView
                 android:id="@+id/user_photo_img"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:src="@drawable/user_photo"
-                app:aspect_ratio="1.78"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?selectableItemBackground"
-                />
+                android:scaleType="centerCrop"
+                android:src="@drawable/user_photo"
+                app:aspect_ratio="1.78"/>
 
             <TextView
                 android:id="@+id/user_full_name_txt"
@@ -40,19 +38,22 @@
                 android:paddingBottom="@dimen/spacing_medial_24"
                 android:paddingLeft="@dimen/spacing_normal_16"
                 android:paddingRight="@dimen/spacing_normal_16"
-                android:text="Фамилия Имя"
+                android:text="@string/user_profile.full_name"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_medium_24"/>
         </FrameLayout>
 
+        <!-- Статистика -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_large_72"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
+            <!-- Рейтинг -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="@dimen/size_smaller_0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:gravity="center_horizontal"
@@ -63,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="0"
+                    android:text="@string/user_profile.rating_txt.default_value"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_medial_20"/>
 
@@ -71,13 +72,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="@string/raiting"
+                    android:text="@string/user_profile.rating_txt.text"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_normal_14"/>
             </LinearLayout>
 
+            <!-- Написано строк кода -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="@dimen/size_smaller_0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="center_horizontal"
@@ -88,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="0"
+                    android:text="@string/user_profile.code_lines_txt.default_value"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_medial_20"/>
 
@@ -96,13 +98,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="@string/rows_code"
+                    android:text="@string/user_profile.code_lines_txt.text"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_normal_14"/>
             </LinearLayout>
 
+            <!-- Проектов -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="@dimen/size_smaller_0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:gravity="center_horizontal"
@@ -113,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="0"
+                    android:text="@string/user_profile.projects_txt.default_value"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_medial_20"/>
 
@@ -121,12 +124,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="@string/project"
+                    android:text="@string/user_profile.projects_txt.text"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_normal_14"/>
             </LinearLayout>
         </LinearLayout>
 
+        <!-- О себе -->
         <TextView
             android:id="@+id/bio_txt"
             android:layout_width="match_parent"
@@ -135,17 +139,18 @@
             android:maxLines="3"
             android:paddingLeft="@dimen/spacing_normal_16"
             android:paddingRight="@dimen/spacing_normal_16"
-            android:text="@string/info_default_value"
+            android:text="@string/user_profile.bio_et.default_value"
             android:textColor="@color/gray_light"
             android:textSize="@dimen/font_normal_14"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_size"
             android:layout_marginBottom="@dimen/spacing_small_8"
             android:layout_marginTop="@dimen/spacing_normal_16"
             android:background="@color/gray_light"/>
 
+        <!-- Просмотр профиля -->
         <Button
             android:id="@+id/more_info_btn"
             style="@style/Widget.AppCompat.Button.Borderless"
@@ -153,9 +158,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/spacing_normal_16"
             android:paddingRight="@dimen/spacing_normal_16"
-            android:text="Просмотр"
+            android:text="@string/user_profile.more_info_btn.text"
             android:textColor="@color/color_accent"/>
     </LinearLayout>
-
-
 </android.support.v7.widget.CardView>

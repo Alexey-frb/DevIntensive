@@ -52,7 +52,7 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
      * Creates the underlying database table.
      */
     public static void createTable(Database db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"REPOSITORIES\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"REMOTE_ID\" TEXT NOT NULL UNIQUE ," + // 1: remoteId
@@ -60,9 +60,7 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
                 "\"USER_REMOTE_ID\" TEXT);"); // 3: userRemoteId
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+    /** Drops the underlying database table. */
     public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"REPOSITORIES\"";
         db.execSQL(sql);
@@ -71,18 +69,18 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, Repository entity) {
         stmt.clearBindings();
-
+ 
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getRemoteId());
-
+ 
         String repositoryName = entity.getRepositoryName();
         if (repositoryName != null) {
             stmt.bindString(3, repositoryName);
         }
-
+ 
         String userRemoteId = entity.getUserRemoteId();
         if (userRemoteId != null) {
             stmt.bindString(4, userRemoteId);
@@ -92,18 +90,18 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
     @Override
     protected final void bindValues(SQLiteStatement stmt, Repository entity) {
         stmt.clearBindings();
-
+ 
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getRemoteId());
-
+ 
         String repositoryName = entity.getRepositoryName();
         if (repositoryName != null) {
             stmt.bindString(3, repositoryName);
         }
-
+ 
         String userRemoteId = entity.getUserRemoteId();
         if (userRemoteId != null) {
             stmt.bindString(4, userRemoteId);
@@ -119,7 +117,7 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
-    }
+    }    
 
     @Override
     public Repository readEntity(Cursor cursor, int offset) {
@@ -131,21 +129,21 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
         );
         return entity;
     }
-
+     
     @Override
     public void readEntity(Cursor cursor, Repository entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setRemoteId(cursor.getString(offset + 1));
         entity.setRepositoryName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setUserRemoteId(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-    }
-
+     }
+    
     @Override
     protected final Long updateKeyAfterInsert(Repository entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
-
+    
     @Override
     public Long getKey(Repository entity) {
         if (entity != null) {
@@ -160,9 +158,7 @@ public class RepositoryDao extends AbstractDao<Repository, Long> {
         return true;
     }
 
-    /**
-     * Internal query to resolve the "repositories" to-many relationship of User.
-     */
+    /** Internal query to resolve the "repositories" to-many relationship of User. */
     public List<Repository> _queryUser_Repositories(String userRemoteId) {
         synchronized (this) {
             if (user_RepositoriesQuery == null) {

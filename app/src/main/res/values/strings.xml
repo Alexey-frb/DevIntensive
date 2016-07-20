@@ -1,46 +1,68 @@
 <resources>
     <string name="app_name">Чуркин Алексей</string>
-    <string name="phone_hint">Мобильный</string>
-    <string name="email_hint">E-mail</string>
-    <string name="vk_hint">Профиль в VK</string>
-    <string name="git_hint">Репозиторий</string>
-    <string name="info_hint">О себе</string>
-    <string name="raiting">Рейтинг</string>
-    <string name="rows_code">Написано строк кода</string>
-    <string name="project">Проектов</string>
-    <string name="phone_default_value">+7 (927) 672-49-59</string>
-    <string name="email_default_value">alexey.frb@gmail.com</string>
-    <string name="vk_default_value">vk.com/alx_tt</string>
-    <string name="git_default_value">github.com/Alexey/DevIntensive</string>
-    <string name="info_default_value">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+
+    <string name="user_profile.phone_et.hint">Мобильный</string>
+    <string name="user_profile.email_et.hint">E-mail</string>
+    <string name="user_profile.vk_et.hint">Профиль в VK</string>
+    <string name="user_profile.git_et.hint">Репозиторий</string>
+    <string name="user_profile.bio_et.hint">О себе</string>
+    <string name="user_profile.rating_txt.text">Рейтинг</string>
+    <string name="user_profile.code_lines_txt.text">Написано строк кода</string>
+    <string name="user_profile.projects_txt.text">Проектов</string>
+    <string name="user_profile.phone_et.default_value">+7 (ххх) ххх-хх-хх</string>
+    <string name="user_profile.email_et.default_value">mail@mail.com</string>
+    <string name="user_profile.vk_et.default_value">vk.com/profile</string>
+    <string name="user_profile.git_et.default_value">github.com/profile/repository</string>
+    <string name="user_profile.bio_et.default_value">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
         deserunt mollit anim id est laborum.</string>
-    <string name="user_profile.placeholder.image">Изменить фотографию профиля</string>
-    <string name="user_profile_dialog_gallery">Загрузить из галлереи</string>
-    <string name="user_profile_dialog_camera">Сделать снимок</string>
-    <string name="user_profile_dialog_cancel">Отмена</string>
-    <string name="user_profile_dialog_title">Изменить фотографию профиля</string>
-    <string name="user_profile_choose_message">выберите фото</string>
-    <string name="login_frame.title">ВОЙТИ</string>
-    <string name="login_frame.email.hint">Email</string>
-    <string name="login_frame_password_hint">Пароль</string>
-    <string name="login_frame_button_title">ВОЙТИ</string>
-    <string name="login_frame_password_lost">Забыли пароль?</string>
-    <string name="info_raiting">5</string>
-    <string name="info_rows_code">5</string>
-    <string name="info_project">5</string>
-    <string name="user_name">Чуркин Алексей</string>
-    <string name="menu_profile">Мой профиль</string>
-    <string name="menu_team">Команда</string>
+    <string name="user_profile.rating_txt.default_value">55</string>
+    <string name="user_profile.code_lines_txt.default_value">5555</string>
+    <string name="user_profile.projects_txt.default_value">5</string>
+    <string name="user_profile.full_name">Фамилия Имя</string>
+    <string name="user_profile.more_info_btn.text">Просмотр</string>
 
-    <string name="error_create_file">Ошибка создания файла</string>
-    <string name="error_phone_et">Номер телефона должен содержать 11-20 символов</string>
+    <string name="user_profile.placeholder.image">Изменить фотографию профиля</string>
+    <string name="user_profile.dialog.gallery">Загрузить фото из галереи</string>
+    <string name="user_profile.dialog.camera">Сделать снимок</string>
+    <string name="user_profile.dialog.cancel">Отмена</string>
+    <string name="user_profile.dialog.title">Изменить фотографию профиля</string>
+    <string name="user_profile.dialog.choose_message">Выберите фото</string>
+
+    <string name="login_frame.login_txt.text">ВОЙТИ</string>
+    <string name="login_frame.login_email_et.hint">Email</string>
+    <string name="login_frame.login_password_et.hint">Пароль</string>
+    <string name="login_frame.login_btn.text">ВОЙТИ</string>
+    <string name="login_frame.remember_txt.text">Забыли пароль?</string>
+    <string name="login_frame.url.forgot_pass">http://devintensive.softdesign-apps.ru/forgotpass</string>
+
+    <string name="menu.profile">Мой профиль</string>
+    <string name="menu.team">Команда</string>
+    <string name="menu.exit">Выход</string>
+
+    <string name="error_phone_et">Номер телефона должен содержать 11–20 символов</string>
     <string name="error_email_et">Введен некорректный e-mail</string>
     <string name="error_vk_et">Введите адрес в формате vk.com/xxx</string>
     <string name="error_git_et">Введите адрес в формате github.com/xxx</string>
-    <string name="frame_login.url.forgot_pass">http://devintensive.softdesign-apps.ru/forgotpass</string>
 
+    <string name="error.create_file">Ошибка создания файла</string>
+    <string name="error.invalid_login_or_password">Неверный логин или пароль!</string>
+    <string name="error.not_response_from_server">Нет ответа от сервера!</string>
+    <string name="error.network_not_available">Сеть на данный момент не доступна, попробуйте позже!</string>
+    <string name="error.incorrect_token">Невалидный токен!</string>
+    <string name="error.user_list_not_available">Список пользователей не может быть получен</string>
+    <string name="error.app_email_not_available">Приложение для работы с почтой отсутствует!</string>
+    <string name="error.user_list_not_loaded">Список пользователей не может быть загружен</string>
+
+    <string name="info.give_permission">Для корректной работы приложения необходимо дать требуемые разрешения</string>
+    <string name="info.action_granted">Разрешить</string>
+
+    <string name="search.hint">Введите имя пользователя</string>
+    <string name="search.title">Поиск</string>
+
+    <string name="user_profile.photo.upload_ok">Фото загружено на сервер</string>
+    <string name="user_profile.photo.upload_error">Ошибка загрузки фото на сервер</string>
 </resources>

@@ -33,13 +33,13 @@ public class UserListRes {
         private int v;
         @SerializedName("repositories")
         @Expose
-        private UserModelRes.Repositories repositories;
+        private UserModelGetRes.Repositories repositories;
         @SerializedName("profileValues")
         @Expose
-        private UserModelRes.ProfileValues profileValues;
+        private UserModelGetRes.ProfileValues profileValues;
         @SerializedName("publicInfo")
         @Expose
-        private UserModelRes.PublicInfo publicInfo;
+        private UserModelGetRes.PublicInfo publicInfo;
         @SerializedName("specialization")
         @Expose
         private String specialization;
@@ -47,15 +47,15 @@ public class UserListRes {
         @Expose
         private String updated;
 
-        public UserModelRes.Repositories getRepositories() {
+        public UserModelGetRes.Repositories getRepositories() {
             return repositories;
         }
 
-        public UserModelRes.ProfileValues getProfileValues() {
+        public UserModelGetRes.ProfileValues getProfileValues() {
             return profileValues;
         }
 
-        public UserModelRes.PublicInfo getPublicInfo() {
+        public UserModelGetRes.PublicInfo getPublicInfo() {
             return publicInfo;
         }
 

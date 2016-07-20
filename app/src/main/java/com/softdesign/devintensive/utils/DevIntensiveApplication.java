@@ -13,8 +13,8 @@ import org.greenrobot.greendao.database.Database;
 
 public class DevIntensiveApplication extends Application {
 
-    private static Context sContext;
     private static SharedPreferences sSharedPreferences;
+    private static Context sContext;
     private static DaoSession sDaoSession;
 
     public static SharedPreferences getSharedPreferences() {

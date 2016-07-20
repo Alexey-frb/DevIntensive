@@ -33,14 +33,21 @@ import com.softdesign.devintensive.utils.helper.SimpleItemTouchHelperCallback;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class UserListActivity extends BaseActivity implements OnStartDragListener {
 
     private static final String TAG = ConstantManager.TAG_PREFIX + "UserListActivity";
 
-    private CoordinatorLayout mCoordinatorLayout;
-    private Toolbar mToolbar;
-    private DrawerLayout mNavigationDrawer;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.main_coordinator_container)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.navigation_drawer)
+    DrawerLayout mNavigationDrawer;
+    @BindView(R.id.user_list)
+    RecyclerView mRecyclerView;
 
     private DataManager mDataManager;
     private UserAdapter mUserAdapter;
@@ -61,13 +68,9 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         mConnector.onCreate(this, savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        //ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         mDataManager = DataManager.getInstance();
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_container);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mNavigationDrawer = (DrawerLayout) findViewById(R.id.navigation_drawer);
-        mRecyclerView = (RecyclerView) findViewById(R.id.user_list);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -76,8 +79,8 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
 
         setupToolbar();
         setupDrawer();
+
         mConnector.runOperation(new LoadUsersFromDb(), false);
-        ;
     }
 
     @Override
@@ -122,13 +125,19 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         }
     }
 
+    /**
+     * Переопределяет меню пользователя - добавление кнопки Поиск
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint("Введите имя пользователя");
+        searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -150,12 +159,21 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         mItemTouchHelper.startDrag(viewHolder);
     }
 
+    /**
+     * Отобразить снекбар с сообщением
+     *
+     * @param message
+     */
     private void showSnackbar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Инициализировать боковое меню
+     */
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        assert navigationView != null;
         navigationView.setCheckedItem(R.id.team_menu);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -164,9 +182,18 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
 
                 switch (item.getItemId()) {
                     case R.id.user_profile_menu:
-                        startActivity(new Intent(UserListActivity.this, MainActivity.class));
+                        Intent intentActivity = new Intent(UserListActivity.this, MainActivity.class);
+                        finish();
+                        startActivity(intentActivity);
                         break;
                     case R.id.team_menu:
+                        break;
+                    case R.id.exit_menu:
+                        mDataManager.getPreferencesManager().saveAuthToken("");
+                        mDataManager.getPreferencesManager().saveUserId("");
+                        Intent authActivity = new Intent(UserListActivity.this, AuthActivity.class);
+                        finish();
+                        startActivity(authActivity);
                         break;
                 }
 
@@ -176,8 +203,11 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         });
     }
 
+    /**
+     * Инициализировать тулбар
+     */
     private void setupToolbar() {
-        mToolbar.setTitle("Команда");
+        mToolbar.setTitle(R.string.menu_team);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
 
@@ -187,6 +217,11 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         }
     }
 
+    /**
+     * Отобразить список пользователей
+     *
+     * @param users - список пользовалей
+     */
     private void showUsers(final List<User> users) {
         mUsers = users;
         mUserAdapter = new UserAdapter(mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
@@ -207,6 +242,11 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
+    /**
+     * Отобразить список пользователей в соответствии с поиисковым запросом
+     *
+     * @param query - поисковый запрос
+     */
     private void showUserByQuery(String query) {
         mQuery = query;
 
@@ -225,12 +265,17 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         }
     }
 
+    /**
+     * Вызывается по завершению сохранения в локальную базу данных
+     *
+     * @param result - результат
+     */
     public void onOperationFinished(final LoadUsersFromDb.Result result) {
         if (result.isSuccessful()) {
             Log.d(TAG, "onOperationFinished: successful!");
 
             if (result.getOutput().size() == 0) {
-                showSnackbar("Список пользователей не может быть загружен");
+                showSnackbar(getString(R.string.error_user_list_not_loaded));
             } else {
                 showUsers(result.getOutput());
             }

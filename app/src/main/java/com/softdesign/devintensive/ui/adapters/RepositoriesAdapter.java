@@ -12,9 +12,10 @@ import com.softdesign.devintensive.R;
 import java.util.List;
 
 public class RepositoriesAdapter extends BaseAdapter {
-    private List<String> mRepoList;
+
     private Context mContext;
     private LayoutInflater mInflater;
+    private List<String> mRepoList;
 
     public RepositoriesAdapter(Context context, List<String> repoList) {
         mRepoList = repoList;
