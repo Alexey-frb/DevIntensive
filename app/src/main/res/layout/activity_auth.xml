@@ -7,8 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:ignore="contentDescription"
-    tools:context=".ui.activities.AuthActivity">
+    tools:context=".ui.activities.AuthActivity"
+    tools:ignore="contentDescription">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -19,19 +19,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="@dimen/font_medium_24"
+            android:text="@string/dev_intensive_app"
             android:textColor="@color/white"
-            android:text="Dev Intensive App"/>
+            android:textSize="@dimen/font_medium_24"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/authorization_box"
             android:layout_width="@dimen/login_frame_size"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="visible"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/login_frame_corner_radius"
-            app:cardElevation="@dimen/login_frame_elevation"
-            android:visibility="gone">
+            app:cardElevation="@dimen/login_frame_elevation">
 
             <LinearLayout
                 android:layout_width="match_parent"

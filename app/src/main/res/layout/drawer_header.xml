@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/spacing_medial_24"
     tools:ignore="contentDescription">
 
-    <com.softdesign.devintensive.ui.views.CircleImageView
+    <ImageView
         android:id="@+id/user_avatar_img"
         android:layout_width="@dimen/avatar_image_size"
         android:layout_height="@dimen/avatar_image_size"

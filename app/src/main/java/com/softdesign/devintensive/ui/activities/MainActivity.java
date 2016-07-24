@@ -38,7 +38,7 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
-import com.softdesign.devintensive.ui.views.CircleImageView;
+import com.softdesign.devintensive.utils.CircleTransform;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.EditTextWatcher;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
@@ -172,22 +172,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDataManager = DataManager.getInstance();
 
         setupToolbar();
-        initUserInfoData();
-        initUserProfileData();
         setupDrawer();
+
+        initUserInfoData();
 
         mUserPhoneWatcher = new EditTextWatcher(this, mUserPhone);
         mUserMailWatcher = new EditTextWatcher(this, mUserMail);
         mUserVkWatcher = new EditTextWatcher(this, mUserVk);
         mUserGitWatcher = new EditTextWatcher(this, mUserGit);
-
-        DataManager.getInstance().getPicasso()
-                .load(mDataManager.getPreferencesManager().loadUserPhoto())
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .fit()
-                .centerCrop()
-                .placeholder(R.drawable.user_bg)
-                .into(mProfileImage);
 
         if (savedInstanceState == null) {
             // активити запускается впервые
@@ -377,18 +369,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == ConstantManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
-                // например, вывести сообщение или обработать какой то логикой, если нужно
-            }
+        switch (requestCode) {
+            case ConstantManager.REQUEST_PERMISSION_CAMERA_CODE:
+                if (grantResults.length == 2 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: permissions camera granted");
+                    loadPhotoFromCamera();
+                }
+                break;
+            case ConstantManager.REQUEST_PERMISSIONS_READ_SDCARD_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: permissions read sdcard granted");
+                    loadPhotoFromGallery();
+                }
+                break;
         }
-
-        if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            // TODO: 08.07.2016 тут обрабатываем разрешение (разрешение получено)
-            // например, вывести сообщение или обработать какой то логикой, если нужно
-        }
-
     }
 
     /**
@@ -419,51 +415,55 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        assert navigationView != null;
+        if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.user_profile_menu);
 
-        navigationView.setCheckedItem(R.id.user_profile_menu);
+            // Инициализация меню navigation view
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    item.setChecked(true);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                item.setChecked(true);
+                    switch (item.getItemId()) {
+                        case R.id.user_profile_menu:
+                            break;
 
-                switch (item.getItemId()) {
-                    case R.id.user_profile_menu:
-                        break;
-                    case R.id.team_menu:
-                        Intent teamActivity = new Intent(MainActivity.this, UserListActivity.class);
-                        finish();
-                        startActivity(teamActivity);
-                        break;
-                    case R.id.exit_menu:
-                        mDataManager.getPreferencesManager().saveAuthToken("");
-                        mDataManager.getPreferencesManager().saveUserId("");
-                        Intent authActivity = new Intent(MainActivity.this, AuthActivity.class);
-                        finish();
-                        startActivity(authActivity);
-                        break;
+                        case R.id.team_menu:
+                            Intent teamActivity = new Intent(MainActivity.this, UserListActivity.class);
+                            finish();
+                            startActivity(teamActivity);
+                            break;
+
+                        case R.id.exit_menu:
+                            mDataManager.getPreferencesManager().saveAuthToken("");
+                            mDataManager.getPreferencesManager().saveUserId("");
+                            Intent authActivity = new Intent(MainActivity.this, AuthActivity.class);
+                            finish();
+                            startActivity(authActivity);
+                            break;
+                    }
+                    mNavigationDrawer.closeDrawer(GravityCompat.START);
+                    return false;
                 }
+            });
 
-                mNavigationDrawer.closeDrawer(GravityCompat.START);
-                return false;
-            }
-        });
+            // Загружаем имя пользователя, емейл
+            TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
+            TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
+            userName.setText(mDataManager.getPreferencesManager().getFullName());
+            userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
 
-        TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
-        TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
-        userName.setText(mDataManager.getPreferencesManager().getFullName());
-        userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
-
-        // Загружаем фото аватар, для скругления используем кастомный view
-        CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
-        DataManager.getInstance().getPicasso()
-                .load(mDataManager.getPreferencesManager().loadUserAvatar())
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .fit()
-                .centerCrop()
-                .placeholder(R.drawable.ic_account)
-                .into(userAvatar);
+            // Загружаем фото аватар, для скругления используем трансформацию
+            ImageView userAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
+            DataManager.getInstance().getPicasso()
+                    .load(mDataManager.getPreferencesManager().loadUserAvatar())
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_account)
+                    .transform(new CircleTransform())
+                    .into(userAvatar);
+        }
     }
 
     /**
@@ -514,14 +514,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Загрузить пользовательские данные
      */
     private void initUserInfoData() {
+        // Загрузить данные пользователя: ФИО, телефон, емейл, ВК, github
         List<String> userInfo = mDataManager.getPreferencesManager().loadUserInfoData();
         for (int i = 0; i < userInfo.size(); i++) {
             mUserInfoViews.get(i).setText(userInfo.get(i));
         }
+        // Загрузить данные профиля: рейтинг, количество проектов и строк кода
+        List<String> userProfile = mDataManager.getPreferencesManager().loadUserProfileData();
+        for (int i = 0; i < userProfile.size(); i++) {
+            mUserValueViews.get(i).setText(userProfile.get(i));
+        }
+
+        // Загрузить фото пользователя
+        DataManager.getInstance().getPicasso()
+                .load(mDataManager.getPreferencesManager().loadUserPhoto())
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.user_bg)
+                .into(mProfileImage);
     }
 
     /**
-     * Сохранить пользоательские данные
+     * Сохранить пользовательские данные после редактирования
      */
     private void saveUserInfoData() {
         List<String> userInfo = new ArrayList<>();
@@ -529,13 +544,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             userInfo.add(userFieldView.getText().toString());
         }
         mDataManager.getPreferencesManager().saveUserInfoData(userInfo);
-    }
-
-    private void initUserProfileData() {
-        List<String> userProfile = mDataManager.getPreferencesManager().loadUserProfileData();
-        for (int i = 0; i < userProfile.size(); i++) {
-            mUserValueViews.get(i).setText(userProfile.get(i));
-        }
     }
 
     /**
@@ -589,17 +597,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Загрузить фото из галерии
      */
     private void loadPhotoFromGallery() {
-        Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        takeGalleryIntent.setType("image/*");
-        startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_dialog_choose_message)), ConstantManager.REQUEST_GALLERY_PICTURE);
+        // Проверка наличия разрешения на чтение с карты памяти
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            takeGalleryIntent.setType("image/*");
+            startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_dialog_choose_message)), ConstantManager.REQUEST_GALLERY_PICTURE);
+        } else {
+            // Запрос необходимых разрешений у пользователя
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, ConstantManager.REQUEST_PERMISSIONS_READ_SDCARD_CODE);
+            Snackbar.make(mCoordinatorLayout, R.string.info_give_permission, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.info_action_granted, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openApplicationSettings();
+                        }
+                    }).show();
+        }
     }
 
     /**
      * Загрузить фото с камеры (сделать снимок)
      */
     private void loadPhotoFromCamera() {
-        // Проверка наличия разрешения на использование камеры
+        // Проверка наличия разрешений на использование камеры и запись на карту памяти
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
@@ -618,10 +640,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivityForResult(takeCaptureIntent, ConstantManager.REQUEST_CAMERA_PICTURE);
             }
         } else {
+            // Запрос необходимых разрешений у пользователя
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
+            }, ConstantManager.REQUEST_PERMISSION_CAMERA_CODE);
 
             Snackbar.make(mCoordinatorLayout, R.string.info_give_permission, Snackbar.LENGTH_LONG)
                     .setAction(R.string.info_action_granted, new View.OnClickListener() {
@@ -750,7 +773,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void openApplicationSettings() {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
 
-        startActivityForResult(appSettingsIntent, ConstantManager.PERMISSION_REQUEST_SETTINGS_CODE);
+        startActivityForResult(appSettingsIntent, ConstantManager.REQUEST_PERMISSION_SETTINGS_CODE);
     }
 
     /**

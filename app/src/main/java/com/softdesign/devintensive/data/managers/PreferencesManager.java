@@ -198,4 +198,35 @@ public class PreferencesManager {
     public String getUserId() {
         return mSharedPreferences.getString(ConstantManager.USER_ID_KEY, "null");
     }
+
+    /**
+     * Сохранить текущую сортировку БД в shared preferences
+     *
+     * @param orderProperty  - свойство сортировки (поле сортировки)
+     * @param orderAscOrDesc - тип сортировки (по возрастанию, по убыванию)
+     */
+    public void saveOrderDb(String orderProperty, String orderAscOrDesc) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.ORDER_PROPERTY, orderProperty);
+        editor.putString(ConstantManager.ORDER_ASC_OR_DESC, orderAscOrDesc);
+        editor.apply();
+    }
+
+    /**
+     * Возвращает свойство сортировки (поле сортировки) из shared preferences
+     *
+     * @return - свойство сортировки
+     */
+    public String getOrderProperty() {
+        return mSharedPreferences.getString(ConstantManager.ORDER_PROPERTY, "manual");
+    }
+
+    /**
+     * Возвращает тип сортировки (по возрастанию, по убыванию) из shared preferences
+     *
+     * @return - тип сортировки
+     */
+    public String getOrderAscOrDesc() {
+        return mSharedPreferences.getString(ConstantManager.ORDER_ASC_OR_DESC, " ASC");
+    }
 }

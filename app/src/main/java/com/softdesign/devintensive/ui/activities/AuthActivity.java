@@ -329,16 +329,16 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param result - результат
      */
+    @SuppressWarnings("unused")
     public void onOperationFinished(final SaveUsersInDb.Result result) {
-
         hideProgress();
 
         if (result.isSuccessful()) {
             Log.d(TAG, "onOperationFinished: successful!");
 
             Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
-            startActivity(loginIntent);
             finish();
+            startActivity(loginIntent);
         } else {
             Log.e(TAG, "onOperationFinished: " + result.getErrorMessage());
         }
@@ -350,6 +350,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      * @param error - текст ошибки
      */
     @Subscribe
+    @SuppressWarnings("unused")
     public void answerAvailable(String error) {
         hideProgress();
 

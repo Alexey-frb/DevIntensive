@@ -19,6 +19,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.redmadrobot.chronos.ChronosConnector;
@@ -28,7 +29,7 @@ import com.softdesign.devintensive.data.storage.LoadUsersFromDb;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDTO;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
-import com.softdesign.devintensive.ui.views.CircleImageView;
+import com.softdesign.devintensive.utils.CircleTransform;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.helper.OnStartDragListener;
 import com.softdesign.devintensive.utils.helper.SimpleItemTouchHelperCallback;
@@ -60,6 +61,7 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
 
     private Handler mHandler;
 
+    private SimpleItemTouchHelperCallback mItemTouchHelperCallback;
     private ItemTouchHelper mItemTouchHelper;
 
     private ChronosConnector mConnector;
@@ -83,7 +85,8 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         setupToolbar();
         setupDrawer();
 
-        mConnector.runOperation(new LoadUsersFromDb(), false);
+        mConnector.runOperation(new LoadUsersFromDb(mDataManager.getPreferencesManager().getOrderProperty(),
+                mDataManager.getPreferencesManager().getOrderAscOrDesc()), false);
     }
 
     @Override
@@ -107,15 +110,6 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
         Log.d(TAG, "onSaveInstanceState");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            mNavigationDrawer.openDrawer(GravityCompat.START);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Кнопка Назад - закрыть меню, если открыто
      */
@@ -129,16 +123,16 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
     }
 
     /**
-     * Переопределяет меню пользователя - добавление кнопки Поиск
+     * Создает меню пользователя
      *
-     * @param menu
-     * @return
+     * @param menu - меню
+     * @return - результат
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
+        getMenuInflater().inflate(R.menu.menu_settings_user_list, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.search);
+        MenuItem searchItem = menu.findItem(R.id.search_menu);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -154,7 +148,49 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
             }
         });
 
+        switch (mDataManager.getPreferencesManager().getOrderProperty()) {
+            case "manual":
+                menu.findItem(R.id.sort_manual_menu).setChecked(true);
+                break;
+            case "rating":
+                menu.findItem(R.id.sort_rating_menu).setChecked(true);
+                break;
+            case "code_lines":
+                menu.findItem(R.id.sort_code_lines_menu).setChecked(true);
+                break;
+            default:
+                menu.findItem(R.id.sort_manual_menu).setChecked(true);
+        }
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Обработка выбора пунктов меню
+     *
+     * @param item - пункт меню
+     * @return - результат
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mNavigationDrawer.openDrawer(GravityCompat.START);
+                break;
+            case R.id.sort_manual_menu:
+                mConnector.runOperation(new LoadUsersFromDb("manual", " ASC"), false);
+                break;
+            case R.id.sort_rating_menu:
+                mConnector.runOperation(new LoadUsersFromDb("rating", " DESC"), false);
+                break;
+            case R.id.sort_code_lines_menu:
+                mConnector.runOperation(new LoadUsersFromDb("code_lines", " DESC"), false);
+                break;
+        }
+
+        item.setChecked(true);
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -176,51 +212,55 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
      */
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        assert navigationView != null;
+        if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.team_menu);
 
-        navigationView.setCheckedItem(R.id.team_menu);
+            // Инициализация меню navigation view
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    item.setChecked(true);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                item.setChecked(true);
+                    switch (item.getItemId()) {
+                        case R.id.user_profile_menu:
+                            Intent intentActivity = new Intent(UserListActivity.this, MainActivity.class);
+                            finish();
+                            startActivity(intentActivity);
+                            break;
 
-                switch (item.getItemId()) {
-                    case R.id.user_profile_menu:
-                        Intent intentActivity = new Intent(UserListActivity.this, MainActivity.class);
-                        finish();
-                        startActivity(intentActivity);
-                        break;
-                    case R.id.team_menu:
-                        break;
-                    case R.id.exit_menu:
-                        mDataManager.getPreferencesManager().saveAuthToken("");
-                        mDataManager.getPreferencesManager().saveUserId("");
-                        Intent authActivity = new Intent(UserListActivity.this, AuthActivity.class);
-                        finish();
-                        startActivity(authActivity);
-                        break;
+                        case R.id.team_menu:
+                            break;
+
+                        case R.id.exit_menu:
+                            mDataManager.getPreferencesManager().saveAuthToken("");
+                            mDataManager.getPreferencesManager().saveUserId("");
+                            Intent authActivity = new Intent(UserListActivity.this, AuthActivity.class);
+                            finish();
+                            startActivity(authActivity);
+                            break;
+                    }
+                    mNavigationDrawer.closeDrawer(GravityCompat.START);
+                    return false;
                 }
+            });
 
-                mNavigationDrawer.closeDrawer(GravityCompat.START);
-                return false;
-            }
-        });
+            // Загружаем имя пользователя, емейл
+            TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
+            TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
+            userName.setText(mDataManager.getPreferencesManager().getFullName());
+            userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
 
-        TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
-        TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
-        userName.setText(mDataManager.getPreferencesManager().getFullName());
-        userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
-
-        // Загружаем фото аватар, для скругления используем кастомный view
-        CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
-        DataManager.getInstance().getPicasso()
-                .load(mDataManager.getPreferencesManager().loadUserAvatar())
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .fit()
-                .centerCrop()
-                .placeholder(R.drawable.ic_account)
-                .into(userAvatar);
+            // Загружаем фото аватар, для скругления используем трансформацию
+            ImageView userAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
+            DataManager.getInstance().getPicasso()
+                    .load(mDataManager.getPreferencesManager().loadUserAvatar())
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_account)
+                    .transform(new CircleTransform())
+                    .into(userAvatar);
+        }
     }
 
     /**
@@ -250,16 +290,21 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
                 UserDTO userDTO = new UserDTO(mUsers.get(position));
                 Intent profileIntent = new Intent(UserListActivity.this, ProfileUserActivity.class);
                 profileIntent.putExtra(ConstantManager.PARCELABLE_KEY, userDTO);
-
                 startActivity(profileIntent);
             }
         }, this);
 
         mRecyclerView.swapAdapter(mUserAdapter, false);
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mUserAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        if (mItemTouchHelper == null) {
+            // create
+            mItemTouchHelperCallback = new SimpleItemTouchHelperCallback(mUserAdapter);
+            mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
+            mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        } else {
+            // update
+            mItemTouchHelperCallback.swapAdapter(mUserAdapter);
+        }
     }
 
     /**
@@ -281,7 +326,8 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
             mHandler.removeCallbacks(searchUsers);
             mHandler.postDelayed(searchUsers, ConstantManager.SEARCH_DELAY);
         } else {
-            mConnector.runOperation(new LoadUsersFromDb(), false);
+            mConnector.runOperation(new LoadUsersFromDb(mDataManager.getPreferencesManager().getOrderProperty(),
+                    mDataManager.getPreferencesManager().getOrderAscOrDesc()), false);
         }
     }
 
@@ -290,6 +336,7 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
      *
      * @param result - результат
      */
+    @SuppressWarnings("unused")
     public void onOperationFinished(final LoadUsersFromDb.Result result) {
         if (result.isSuccessful()) {
             Log.d(TAG, "onOperationFinished: successful!");

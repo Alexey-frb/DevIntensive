@@ -65,4 +65,10 @@
 
     <string name="user_profile.photo.upload_ok">Фото загружено на сервер</string>
     <string name="user_profile.photo.upload_error">Ошибка загрузки фото на сервер</string>
+
+    <string name="menu.order.manual">Ручная сортировка</string>
+    <string name="menu.order.rating">Сортировка по рейтингу</string>
+    <string name="menu.order.code_lines">Сортировка по строкам кода</string>
+
+    <string name="dev_intensive_app">Dev Intensive App</string>
 </resources>

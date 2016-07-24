@@ -35,9 +35,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public static final float ALPHA_FULL = 1.0f;
 
-    private final ItemTouchHelperAdapter mAdapter;
+    private ItemTouchHelperAdapter mAdapter;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+        mAdapter = adapter;
+    }
+
+    public void swapAdapter(ItemTouchHelperAdapter adapter) {
         mAdapter = adapter;
     }
 
