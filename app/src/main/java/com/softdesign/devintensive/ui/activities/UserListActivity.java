@@ -19,6 +19,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.redmadrobot.chronos.ChronosConnector;
 import com.softdesign.devintensive.R;
@@ -27,9 +28,11 @@ import com.softdesign.devintensive.data.storage.LoadUsersFromDb;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDTO;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
+import com.softdesign.devintensive.ui.views.CircleImageView;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.helper.OnStartDragListener;
 import com.softdesign.devintensive.utils.helper.SimpleItemTouchHelperCallback;
+import com.squareup.picasso.MemoryPolicy;
 
 import java.util.List;
 
@@ -174,7 +177,9 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         assert navigationView != null;
+
         navigationView.setCheckedItem(R.id.team_menu);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -201,6 +206,21 @@ public class UserListActivity extends BaseActivity implements OnStartDragListene
                 return false;
             }
         });
+
+        TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
+        TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
+        userName.setText(mDataManager.getPreferencesManager().getFullName());
+        userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
+
+        // Загружаем фото аватар, для скругления используем кастомный view
+        CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
+        DataManager.getInstance().getPicasso()
+                .load(mDataManager.getPreferencesManager().loadUserAvatar())
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.ic_account)
+                .into(userAvatar);
     }
 
     /**

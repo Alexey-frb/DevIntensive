@@ -95,6 +95,12 @@ public class DataManager {
         return mDaoSession;
     }
 
+    /**
+     * Получить список пользователей из БД в соответствии с запросом
+     *
+     * @param query - запрос (строка поиска)
+     * @return - результат
+     */
     public List<User> getUserListByName(String query) {
         List<User> userList = new ArrayList<>();
 

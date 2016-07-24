@@ -16,7 +16,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Используется для скругления фото для аватара
+ * Кастомная view для скругления фото для аватара
  */
 public class CircleImageView extends ImageView {
 

@@ -146,17 +146,24 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
             Call<UserModelPostRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
+
             call.enqueue(new Callback<UserModelPostRes>() {
                 @Override
                 public void onResponse(Call<UserModelPostRes> call, Response<UserModelPostRes> response) {
-                    if (response.code() == 200) {
-                        mDataManager.getPreferencesManager().saveAuthToken(response.body().getData().getToken());
-                        mDataManager.getPreferencesManager().saveUserId(response.body().getData().getUser().getId());
-                        loginSuccess(response.body().getData().getUser());
-                    } else if (response.code() == 404) {
-                        mBus.post(getString(R.string.error_invalid_login_or_password));
-                    } else {
-                        mBus.post(getString(R.string.error_not_response_from_server));
+                    try {
+                        if (response.code() == 200) {
+                            mDataManager.getPreferencesManager().saveAuthToken(response.body().getData().getToken());
+                            mDataManager.getPreferencesManager().saveUserId(response.body().getData().getUser().getId());
+                            loginSuccess(response.body().getData().getUser());
+                        } else if (response.code() == 404) {
+                            mBus.post(getString(R.string.error_invalid_login_or_password));
+                        } else {
+                            mBus.post(getString(R.string.error_not_response_from_server));
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onResponseSignIn: " + e.toString());
+                        mBus.post(e.toString());
                     }
                 }
 
@@ -183,15 +190,22 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         if (!mDataManager.getPreferencesManager().getAuthToken().equals("null") && !mDataManager.getPreferencesManager().getUserId().equals("null")) {
             if (NetworkStatusChecker.isNetworkAvailable(this)) {
                 Call<UserModelGetRes> call = mDataManager.loginToken(mDataManager.getPreferencesManager().getUserId());
+
                 call.enqueue(new Callback<UserModelGetRes>() {
                     @Override
                     public void onResponse(Call<UserModelGetRes> call, Response<UserModelGetRes> response) {
-                        if (response.code() == 200) {
-                            loginSuccess(response.body().getData());
-                        } else if (response.code() == 401) {
-                            mBus.post(getString(R.string.error_incorrect_token));
-                        } else {
-                            mBus.post(getString(R.string.error_not_response_from_server));
+                        try {
+                            if (response.code() == 200) {
+                                loginSuccess(response.body().getData());
+                            } else if (response.code() == 401) {
+                                mBus.post(getString(R.string.error_incorrect_token));
+                            } else {
+                                mBus.post(getString(R.string.error_not_response_from_server));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "onResponseSignInByToken: " + e.toString());
+                            mBus.post(e.toString());
                         }
                     }
 
@@ -316,16 +330,17 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      * @param result - результат
      */
     public void onOperationFinished(final SaveUsersInDb.Result result) {
+
+        hideProgress();
+
         if (result.isSuccessful()) {
             Log.d(TAG, "onOperationFinished: successful!");
 
-            hideProgress();
-
             Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
-            finish();
             startActivity(loginIntent);
+            finish();
         } else {
-            Log.e(TAG, "onOperationFinished: error " + result.getErrorMessage());
+            Log.e(TAG, "onOperationFinished: " + result.getErrorMessage());
         }
     }
 

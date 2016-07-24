@@ -42,7 +42,8 @@
                         android:layout_height="@dimen/profile_image_size"
                         android:scaleType="centerCrop"
                         android:src="@drawable/user_photo"
-                        android:visibility="visible"/>
+                        android:visibility="visible"
+                        android:fitsSystemWindows="true"/>
 
                     <RelativeLayout
                         android:id="@+id/profile_placeholder"
@@ -78,7 +79,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:theme="@style/AppTheme.PopupOverlay"
-                    app:layout_collapseMode="pin"/>
+                    app:layout_collapseMode="pin"
+                    app:theme="@style/ToolBarStyle"/>
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 

@@ -15,8 +15,6 @@ import java.util.List;
  */
 public class PreferencesManager {
 
-    private SharedPreferences mSharedPreferences;
-
     private static final String[] USER_DATA = {
             ConstantManager.FIRST_NAME,
             ConstantManager.SECOND_NAME};
@@ -30,18 +28,23 @@ public class PreferencesManager {
             ConstantManager.USER_RATING_VALUE,
             ConstantManager.USER_CODE_LINES_VALUE,
             ConstantManager.USER_PROJECT_VALUE};
-
     private static final int[] USER_INFO_DEFAULT_VALUES = {
             R.string.user_profile_phone_et_default_value,
             R.string.user_profile_email_et_default_value,
             R.string.user_profile_vk_et_default_value,
             R.string.user_profile_git_et_default_value,
             R.string.user_profile_bio_et_default_value};
+    private SharedPreferences mSharedPreferences;
 
     public PreferencesManager() {
         this.mSharedPreferences = DevIntensiveApplication.getSharedPreferences();
     }
 
+    /**
+     * Сохранить пользовательское имя в shared preferences
+     *
+     * @param userData
+     */
     public void saveUserFullName(List<String> userData) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
@@ -51,6 +54,11 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    /**
+     * Восстановить пользовательское имя из shared preferences
+     *
+     * @return
+     */
     public String getFullName() {
         return mSharedPreferences.getString(ConstantManager.SECOND_NAME, "null") + " " +
                 mSharedPreferences.getString(ConstantManager.FIRST_NAME, "null");
@@ -84,6 +92,11 @@ public class PreferencesManager {
         return userInfo;
     }
 
+    /**
+     * Сохранить данные профиля в shared preferences
+     *
+     * @param userProfile
+     */
     public void saveUserProfileData(int[] userProfile) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
@@ -93,6 +106,11 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    /**
+     * Восстановить данные профиля из shared preferences
+     *
+     * @return
+     */
     public List<String> loadUserProfileData() {
         List<String> userProfile = new ArrayList<>();
         for (int i = 0; i < USER_PROFILE.length; i++) {
@@ -122,7 +140,7 @@ public class PreferencesManager {
     }
 
     /**
-     * Сохранить пользовательское фото в shared preferences
+     * Сохранить пользовательский аватар в shared preferences
      *
      * @param uri
      */
@@ -133,7 +151,7 @@ public class PreferencesManager {
     }
 
     /**
-     * Загрузить пользовательское фото из shared preferences
+     * Загрузить пользовательский аватар из shared preferences
      *
      * @return
      */
@@ -141,22 +159,42 @@ public class PreferencesManager {
         return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_AVATAR_KEY, "android.resource://com.softdesign.devintensive/drawable/ic_account"));
     }
 
+    /**
+     * Сохранить токен авторизации в shared preferences
+     *
+     * @param authToken
+     */
     public void saveAuthToken(String authToken) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.AUTH_TOKEN_KEY, authToken);
         editor.apply();
     }
 
+    /**
+     * Получить токен авторизации из shared preferences
+     *
+     * @return
+     */
     public String getAuthToken() {
         return mSharedPreferences.getString(ConstantManager.AUTH_TOKEN_KEY, "null");
     }
 
+    /**
+     * Сохранить идентификатор пользователя в shared preferences
+     *
+     * @param userId
+     */
     public void saveUserId(String userId) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.USER_ID_KEY, userId);
         editor.apply();
     }
 
+    /**
+     * Получить идентификатор пользователя из shared preferences
+     *
+     * @return
+     */
     public String getUserId() {
         return mSharedPreferences.getString(ConstantManager.USER_ID_KEY, "null");
     }

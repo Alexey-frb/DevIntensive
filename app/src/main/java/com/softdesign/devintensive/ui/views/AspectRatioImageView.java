@@ -7,6 +7,9 @@ import android.widget.ImageView;
 
 import com.softdesign.devintensive.R;
 
+/**
+ * Кастомная view для картинок с возможносью задания соотношения сторон экрана
+ */
 public class AspectRatioImageView extends ImageView {
 
     private static final float DEFAULT_ASPECT_RATIO = 1.73f;

@@ -2,6 +2,8 @@
 <resources>
     <color name="color_primary">#595959</color>
     <color name="color_primary_dark">#3D3D3D</color>
+    <!--<color name="color_primary">#3F51B5</color>-->
+    <!--<color name="color_primary_dark">#303F9F</color>-->
     <color name="color_accent">#E74B3C</color>
 
     <color name="black">#000000</color>

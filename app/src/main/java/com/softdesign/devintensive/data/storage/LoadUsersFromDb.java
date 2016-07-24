@@ -14,6 +14,9 @@ import com.softdesign.devintensive.utils.DevIntensiveApplication;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Загрузка списка пользователей из БД
+ */
 public class LoadUsersFromDb extends ChronosOperation<List<User>> {
     public static final String TAG = ConstantManager.TAG_PREFIX + "LoadUsersFromDb";
 

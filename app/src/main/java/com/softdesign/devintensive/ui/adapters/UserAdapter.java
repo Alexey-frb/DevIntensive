@@ -62,6 +62,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             userPhoto = user.getPhoto();
         }
 
+        // Загрузка фото пользователей из списка
         DataManager.getInstance().getPicasso()
                 .load(userPhoto)
                 .placeholder(holder.mDummy)
@@ -133,7 +134,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onItemDismiss(int position) {
-        //DevIntensiveApplication.getDaoSession().getUserDao().delete(mUsers.get(position));
         mUsers.get(position).delete();
 
         mUsers.remove(position);

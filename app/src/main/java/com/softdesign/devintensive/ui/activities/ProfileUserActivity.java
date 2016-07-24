@@ -17,10 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.storage.models.UserDTO;
 import com.softdesign.devintensive.ui.adapters.RepositoriesAdapter;
 import com.softdesign.devintensive.utils.ConstantManager;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ public class ProfileUserActivity extends BaseActivity {
 
         mCollapsingToolbarLayout.setTitle(userDTO.getFullName());
 
-        Picasso.with(this)
+        DataManager.getInstance().getPicasso()
                 .load(userDTO.getPhoto())
                 .placeholder(R.drawable.user_bg)
                 .error(R.drawable.user_bg)

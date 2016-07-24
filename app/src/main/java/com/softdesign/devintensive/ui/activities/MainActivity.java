@@ -43,7 +43,6 @@ import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.EditTextWatcher;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
 import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +69,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String TAG = ConstantManager.TAG_PREFIX + "MainActivity";
 
+    static final ButterKnife.Action<View> ENABLED = new ButterKnife.Action<View>() {
+        @Override
+        public void apply(View view, int index) {
+            view.setEnabled(true);
+            view.setFocusable(true);
+            view.setFocusableInTouchMode(true);
+        }
+    };
+
+    static final ButterKnife.Action<View> DISABLE = new ButterKnife.Action<View>() {
+        @Override
+        public void apply(View view, int index) {
+            view.setEnabled(false);
+            view.setFocusable(false);
+            view.setFocusableInTouchMode(false);
+        }
+    };
+
     @BindView(R.id.main_coordinator_container)
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.toolbar)
@@ -86,7 +103,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     AppBarLayout mAppBarLayout;
     @BindView(R.id.user_photo_img)
     ImageView mProfileImage;
-
     @BindView(R.id.phone_et)
     EditText mUserPhone;
     @BindView(R.id.email_et)
@@ -97,7 +113,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     EditText mUserGit;
     @BindView(R.id.bio_et)
     EditText mUserBio;
-
     @BindView(R.id.call_phone_iv)
     ImageView mCallPhone;
     @BindView(R.id.send_email_iv)
@@ -109,7 +124,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @BindViews({R.id.phone_et, R.id.email_et, R.id.vk_et, R.id.git_et, R.id.bio_et})
     List<EditText> mUserInfoViews;
-
     @BindViews({R.id.call_phone_iv, R.id.send_email_iv, R.id.open_vk_iv, R.id.open_git_iv})
     List<ImageView> mUserActions;
 
@@ -119,14 +133,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     TextView mUserValueCodeLines;
     @BindView(R.id.projects_txt)
     TextView mUserValueProjects;
+
     @BindViews({R.id.rating_txt, R.id.code_lines_txt, R.id.projects_txt})
     List<TextView> mUserValueViews;
 
     private int mCurrentEditMode = 0;
     private DataManager mDataManager;
-
     private AppBarLayout.LayoutParams mAppBarParams = null;
-
     private File mPhotoFile = null;
     private Uri mSelectedImage = null;
 
@@ -138,12 +151,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
      * активности после его уничтожения.
-     * <p>
+     * <p/>
      * в данном методе инициализируется/производится:
      * - UI пользовательский интерфейс (статика)
      * - инициализация статических данных активити
      * - связь данных со списками (инициализация адаптеров)
-     * <p>
+     * <p/>
      * Не запускать длительные операции по работе с данными в onCreate() !!!
      *
      * @param savedInstanceState - объект со значениями, сохраненными в Bundle - состояние UI
@@ -168,7 +181,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUserVkWatcher = new EditTextWatcher(this, mUserVk);
         mUserGitWatcher = new EditTextWatcher(this, mUserGit);
 
-        Picasso.with(this)
+        DataManager.getInstance().getPicasso()
                 .load(mDataManager.getPreferencesManager().loadUserPhoto())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .fit()
@@ -407,6 +420,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         assert navigationView != null;
+
         navigationView.setCheckedItem(R.id.user_profile_menu);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -439,10 +453,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TextView userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
         TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
         userName.setText(mDataManager.getPreferencesManager().getFullName());
-        userEmail.setText(mUserMail.getText());
+        userEmail.setText(mDataManager.getPreferencesManager().loadUserInfoData().get(1));
 
+        // Загружаем фото аватар, для скругления используем кастомный view
         CircleImageView userAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_avatar_img);
-        Picasso.with(this)
+        DataManager.getInstance().getPicasso()
                 .load(mDataManager.getPreferencesManager().loadUserAvatar())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .fit()
@@ -460,14 +475,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void changeEditMode(int mode) {
         if (mode == 1) {
             mFab.setImageResource(R.drawable.ic_done);
-            for (EditText userValue : mUserInfoViews) {
-                userValue.setEnabled(true);
-                userValue.setFocusable(true);
-                userValue.setFocusableInTouchMode(true);
-            }
-            for (ImageView userAction : mUserActions) {
-                userAction.setEnabled(false);
-            }
+
+            ButterKnife.apply(mUserInfoViews, ENABLED);
+            ButterKnife.apply(mUserActions, DISABLE);
 
             mUserPhone.addTextChangedListener(mUserPhoneWatcher);
             mUserMail.addTextChangedListener(mUserMailWatcher);
@@ -483,14 +493,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             mFab.setImageResource(R.drawable.ic_mode_edit);
 
-            for (EditText userValue : mUserInfoViews) {
-                userValue.setEnabled(false);
-                userValue.setFocusable(false);
-                userValue.setFocusableInTouchMode(false);
-            }
-            for (ImageView userAction : mUserActions) {
-                userAction.setEnabled(true);
-            }
+            ButterKnife.apply(mUserInfoViews, DISABLE);
+            ButterKnife.apply(mUserActions, ENABLED);
 
             mUserPhone.removeTextChangedListener(mUserPhoneWatcher);
             mUserMail.removeTextChangedListener(mUserMailWatcher);
@@ -730,7 +734,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param selectedImage - фото
      */
     private void insertProfileImage(Uri selectedImage) {
-        Picasso.with(this)
+        DataManager.getInstance().getPicasso()
                 .load(selectedImage)
                 .resize(getResources().getDimensionPixelSize(R.dimen.profile_image_size), getResources().getDimensionPixelSize(R.dimen.profile_image_size))
                 .centerInside()

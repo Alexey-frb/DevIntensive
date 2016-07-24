@@ -36,10 +36,12 @@ public class DevIntensiveApplication extends Application {
         sContext = getApplicationContext();
         sSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Инициализация БД
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "devintensive-db");
         Database db = helper.getReadableDb();
         sDaoSession = new DaoMaster(db).newSession();
 
+        // Подключение Stetho для дебага БД
         Stetho.initializeWithDefaults(this);
     }
 }
