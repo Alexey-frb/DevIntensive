@@ -37,7 +37,9 @@ import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.network.req.UserContactsReq;
 import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
+import com.softdesign.devintensive.data.network.res.UserContactsRes;
 import com.softdesign.devintensive.utils.CircleTransform;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.EditTextWatcher;
@@ -151,12 +153,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * метод вызывается при создании активити (после изменения конфигурации/возврата к текущей
      * активности после его уничтожения.
-     * <p/>
+     * <p>
      * в данном методе инициализируется/производится:
      * - UI пользовательский интерфейс (статика)
      * - инициализация статических данных активити
      * - связь данных со списками (инициализация адаптеров)
-     * <p/>
+     * <p>
      * Не запускать длительные операции по работе с данными в onCreate() !!!
      *
      * @param savedInstanceState - объект со значениями, сохраненными в Bundle - состояние UI
@@ -507,6 +509,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.white));
 
             saveUserInfoData();
+
+            sendUserContactsInServer();
         }
     }
 
@@ -791,10 +795,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             call.enqueue(new Callback<UploadPhotoRes>() {
                 @Override
                 public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
-                    if (response.code() == 200) {
-                        showSnackbar(getString(R.string.user_profile_photo_upload_ok));
-                    } else {
-                        showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                    try {
+                        if (response.code() == 200) {
+                            showSnackbar(getString(R.string.user_profile_photo_upload_ok));
+                        } else {
+                            showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onResponseUploadPhoto: " + e.toString());
+                        showSnackbar(e.toString());
                     }
                 }
 
@@ -824,10 +834,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             call.enqueue(new Callback<UploadPhotoRes>() {
                 @Override
                 public void onResponse(Call<UploadPhotoRes> call, Response<UploadPhotoRes> response) {
-                    if (response.code() == 200) {
-                        showSnackbar(getString(R.string.user_profile_photo_upload_ok));
-                    } else {
-                        showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                    try {
+                        if (response.code() == 200) {
+                            showSnackbar(getString(R.string.user_profile_photo_upload_ok));
+                        } else {
+                            showSnackbar(getString(R.string.user_profile_photo_upload_error));
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onResponseSignIn: " + e.toString());
+                        showSnackbar(e.toString());
                     }
                 }
 
@@ -850,5 +866,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String filePath = cursor.getString(columnIndex);
         cursor.close();
         return new File(filePath);
+    }
+
+    /**
+     * Отправить изменения пользовательских контактов на сервер
+     */
+    private void sendUserContactsInServer() {
+        Log.d(TAG, "sendUserContactsInServer");
+
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            Call<UserContactsRes> call = mDataManager.changeUserContacts(mDataManager.getPreferencesManager().getUserId(),
+                    new UserContactsReq(
+                            mUserMail.getText().toString(),
+                            mUserPhone.getText().toString(),
+                            mUserVk.getText().toString()));
+
+            call.enqueue(new Callback<UserContactsRes>() {
+                @Override
+                public void onResponse(Call<UserContactsRes> call, Response<UserContactsRes> response) {
+                    try {
+                        if (response.code() == 200) {
+                            showSnackbar(getString(R.string.info_data_change_in_server));
+                        } else if (response.code() == 401) {
+                            showSnackbar(getString(R.string.error_incorrect_token));
+                        } else {
+                            showSnackbar(getString(R.string.error_not_response_from_server));
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onResponseSendUserContactsInServer: " + e.toString());
+                        showSnackbar(e.toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserContactsRes> call, Throwable t) {
+                    Log.e(TAG, "onFailureSendUserContactsInServer:" + t.getMessage());
+                    showSnackbar(t.getMessage());
+                }
+            });
+        } else {
+            showSnackbar(getString(R.string.error_network_not_available));
+        }
     }
 }

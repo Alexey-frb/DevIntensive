@@ -16,9 +16,9 @@ import com.redmadrobot.chronos.ChronosConnector;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.res.UserDataRes;
 import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelGetRes;
-import com.softdesign.devintensive.data.network.res.UserModelPostRes;
+import com.softdesign.devintensive.data.network.res.UserLoginRes;
 import com.softdesign.devintensive.data.storage.SaveUsersInDb;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
@@ -145,11 +145,11 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         showProgress();
 
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
-            Call<UserModelPostRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
+            Call<UserLoginRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
 
-            call.enqueue(new Callback<UserModelPostRes>() {
+            call.enqueue(new Callback<UserLoginRes>() {
                 @Override
-                public void onResponse(Call<UserModelPostRes> call, Response<UserModelPostRes> response) {
+                public void onResponse(Call<UserLoginRes> call, Response<UserLoginRes> response) {
                     try {
                         if (response.code() == 200) {
                             mDataManager.getPreferencesManager().saveAuthToken(response.body().getData().getToken());
@@ -168,7 +168,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
                 }
 
                 @Override
-                public void onFailure(Call<UserModelPostRes> call, Throwable t) {
+                public void onFailure(Call<UserLoginRes> call, Throwable t) {
                     Log.e(TAG, "onFailureSignIn:" + t.getMessage());
                     mBus.post(t.getMessage());
                 }
@@ -189,11 +189,11 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
         if (!mDataManager.getPreferencesManager().getAuthToken().equals("null") && !mDataManager.getPreferencesManager().getUserId().equals("null")) {
             if (NetworkStatusChecker.isNetworkAvailable(this)) {
-                Call<UserModelGetRes> call = mDataManager.loginToken(mDataManager.getPreferencesManager().getUserId());
+                Call<UserDataRes> call = mDataManager.loginToken(mDataManager.getPreferencesManager().getUserId());
 
-                call.enqueue(new Callback<UserModelGetRes>() {
+                call.enqueue(new Callback<UserDataRes>() {
                     @Override
-                    public void onResponse(Call<UserModelGetRes> call, Response<UserModelGetRes> response) {
+                    public void onResponse(Call<UserDataRes> call, Response<UserDataRes> response) {
                         try {
                             if (response.code() == 200) {
                                 loginSuccess(response.body().getData());
@@ -210,7 +210,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
                     }
 
                     @Override
-                    public void onFailure(Call<UserModelGetRes> call, Throwable t) {
+                    public void onFailure(Call<UserDataRes> call, Throwable t) {
                         Log.e(TAG, "onFailureSignInByToken:" + t.getMessage());
                         mBus.post(t.getMessage());
                     }
@@ -228,7 +228,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param userModel - данные пользователя
      */
-    private void loginSuccess(UserModelGetRes.Data userModel) {
+    private void loginSuccess(UserDataRes.Data userModel) {
         Log.d(TAG, "loginSuccess");
 
         // Сохранение в SharedPreferences
@@ -248,7 +248,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param userModel - данные пользователя
      */
-    private void saveUserProfileData(UserModelGetRes.Data userModel) {
+    private void saveUserProfileData(UserDataRes.Data userModel) {
         int[] userProfile = {
                 userModel.getProfileValues().getRating(),
                 userModel.getProfileValues().getLinesCode(),
@@ -263,7 +263,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param userModel - данные о пользователе
      */
-    private void saveUserInfoData(UserModelGetRes.Data userModel) {
+    private void saveUserInfoData(UserDataRes.Data userModel) {
         List<String> userInfo = new ArrayList<>();
         userInfo.add(userModel.getContacts().getPhone());
         userInfo.add(userModel.getContacts().getEmail());
@@ -279,7 +279,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param userModel - данные о пользователе
      */
-    private void saveUserFullName(UserModelGetRes.Data userModel) {
+    private void saveUserFullName(UserDataRes.Data userModel) {
         List<String> userFullName = new ArrayList<>();
         userFullName.add(userModel.getFirstName());
         userFullName.add(userModel.getSecondName());

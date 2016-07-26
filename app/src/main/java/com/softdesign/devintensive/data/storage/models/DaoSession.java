@@ -17,9 +17,11 @@ import java.util.Map;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig likesDaoConfig;
     private final DaoConfig repositoryDaoConfig;
     private final DaoConfig userDaoConfig;
 
+    private final LikesDao likesDao;
     private final RepositoryDao repositoryDao;
     private final UserDao userDao;
 
@@ -27,22 +29,32 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
+        likesDaoConfig = daoConfigMap.get(LikesDao.class).clone();
+        likesDaoConfig.initIdentityScope(type);
+
         repositoryDaoConfig = daoConfigMap.get(RepositoryDao.class).clone();
         repositoryDaoConfig.initIdentityScope(type);
 
         userDaoConfig = daoConfigMap.get(UserDao.class).clone();
         userDaoConfig.initIdentityScope(type);
 
+        likesDao = new LikesDao(likesDaoConfig, this);
         repositoryDao = new RepositoryDao(repositoryDaoConfig, this);
         userDao = new UserDao(userDaoConfig, this);
 
+        registerDao(Likes.class, likesDao);
         registerDao(Repository.class, repositoryDao);
         registerDao(User.class, userDao);
     }
 
     public void clear() {
+        likesDaoConfig.getIdentityScope().clear();
         repositoryDaoConfig.getIdentityScope().clear();
         userDaoConfig.getIdentityScope().clear();
+    }
+
+    public LikesDao getLikesDao() {
+        return likesDao;
     }
 
     public RepositoryDao getRepositoryDao() {

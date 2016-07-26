@@ -26,7 +26,7 @@
                 android:focusable="true"
                 android:foreground="?selectableItemBackground"
                 android:scaleType="centerCrop"
-                android:src="@drawable/user_photo"
+                android:src="@drawable/user_bg"
                 app:aspect_ratio="1.78"/>
 
             <TextView
@@ -47,9 +47,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_large_72"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:orientation="horizontal">
 
             <!-- Рейтинг -->
             <LinearLayout
@@ -150,15 +150,46 @@
             android:layout_marginTop="@dimen/spacing_normal_16"
             android:background="@color/gray_light"/>
 
-        <!-- Просмотр профиля -->
-        <Button
-            android:id="@+id/more_info_btn"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/spacing_normal_16"
-            android:paddingRight="@dimen/spacing_normal_16"
-            android:text="@string/user_profile.more_info_btn.text"
-            android:textColor="@color/color_accent"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Likes -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small_8"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/like_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/spacing_normal_16"
+                    android:src="@drawable/ic_favorite_gray"/>
+
+                <TextView
+                    android:id="@+id/number_likes_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/spacing_small_8"
+                    android:gravity="bottom"
+                    android:text="@string/likes.null"
+                    android:textColor="@color/gray_light"
+                    android:textSize="@dimen/font_medial_20"/>
+            </LinearLayout>
+
+            <!-- Просмотр профиля -->
+            <Button
+                android:id="@+id/more_info_btn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/spacing_normal_16"
+                android:paddingRight="@dimen/spacing_normal_16"
+                android:text="@string/user_profile.more_info_btn.text"
+                android:textColor="@color/color_accent"/>
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

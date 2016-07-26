@@ -6,7 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserModelGetRes {
+public class UserDataRes {
+
     @SerializedName("success")
     @Expose
     public boolean success;
@@ -19,6 +20,7 @@ public class UserModelGetRes {
     }
 
     public class Data {
+
         @SerializedName("_id")
         @Expose
         public String id;
@@ -83,6 +85,7 @@ public class UserModelGetRes {
     }
 
     public class Repositories {
+
         @SerializedName("repo")
         @Expose
         public List<Repo> repo = new ArrayList<Repo>();
@@ -96,6 +99,7 @@ public class UserModelGetRes {
     }
 
     public class Repo {
+
         @SerializedName("_id")
         @Expose
         public String id;
@@ -120,6 +124,7 @@ public class UserModelGetRes {
     }
 
     public class PublicInfo {
+
         @SerializedName("bio")
         @Expose
         public String bio;
@@ -147,6 +152,7 @@ public class UserModelGetRes {
     }
 
     public class ProfileValues {
+
         @SerializedName("homeTask")
         @Expose
         public int homeTask;
@@ -156,12 +162,18 @@ public class UserModelGetRes {
         @SerializedName("linesCode")
         @Expose
         public int linesCode;
+        @SerializedName("likesBy")
+        @Expose
+        public List<String> likesBy = new ArrayList<String>();
         @SerializedName("rait")
         @Expose
         public int rait;
         @SerializedName("updated")
         @Expose
         public String updated;
+        @SerializedName("rating")
+        @Expose
+        public int rating;
 
         public int getProjects() {
             return projects;
@@ -172,6 +184,18 @@ public class UserModelGetRes {
         }
 
         public int getRating() {
+            return rating;
+        }
+
+        public int getHomeTask() {
+            return homeTask;
+        }
+
+        public List<String> getLikesBy() {
+            return likesBy;
+        }
+
+        public int getRait() {
             return rait;
         }
     }

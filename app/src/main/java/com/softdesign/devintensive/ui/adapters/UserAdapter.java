@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
@@ -28,12 +29,10 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements ItemTouchHelperAdapter {
 
     private static final String TAG = ConstantManager.TAG_PREFIX + "UsersAdapter";
-
+    private final OnStartDragListener mDragStartListener;
     private Context mContext;
     private List<User> mUsers;
     private UserViewHolder.CustomClickListener mCustomClickListener;
-
-    private final OnStartDragListener mDragStartListener;
 
     public UserAdapter(List<User> users, UserViewHolder.CustomClickListener customClickListener, OnStartDragListener dragStartListener) {
         mUsers = users;
@@ -54,6 +53,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(final UserAdapter.UserViewHolder holder, int position) {
         final User user = mUsers.get(position);
         final String userPhoto;
+        int numberLikes;
 
         if (user.getPhoto().isEmpty()) {
             userPhoto = "null";
@@ -62,7 +62,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             userPhoto = user.getPhoto();
         }
 
-        // Загрузка фото пользователей из списка
+        // Загрузка фото пользователя
         DataManager.getInstance().getPicasso()
                 .load(userPhoto)
                 .placeholder(holder.mDummy)
@@ -98,16 +98,27 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     }
                 });
 
+        // Отображение информации о пользователе
         holder.mFullName.setText(user.getFullName());
         holder.mRating.setText(String.valueOf(user.getRating()));
         holder.mCodeLines.setText(String.valueOf(user.getCodeLines()));
         holder.mProjects.setText(String.valueOf(user.getProjects()));
 
+        // Отображение информации о себе пользователя
         if (user.getBio() == null || user.getBio().isEmpty()) {
             holder.mBio.setVisibility(View.GONE);
         } else {
             holder.mBio.setVisibility(View.VISIBLE);
             holder.mBio.setText(user.getBio());
+        }
+        // Отображение лайков пользователя
+        numberLikes = user.getRating() - user.getRait();
+        if (numberLikes > 0) {
+            holder.mLikeUser.setImageResource(R.drawable.ic_favorite);
+            holder.mNumberLikes.setText(String.valueOf(numberLikes));
+        } else {
+            holder.mLikeUser.setImageResource(R.drawable.ic_favorite_gray);
+            holder.mNumberLikes.setText("");
         }
     }
 
@@ -145,6 +156,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         protected TextView mFullName, mRating, mCodeLines, mProjects, mBio;
         protected Button mShowMore;
         protected Drawable mDummy;
+        protected ImageView mLikeUser;
+        protected TextView mNumberLikes;
 
         private CustomClickListener mListener;
 
@@ -160,6 +173,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             mProjects = (TextView) itemView.findViewById(R.id.projects_txt);
             mBio = (TextView) itemView.findViewById(R.id.bio_txt);
             mShowMore = (Button) itemView.findViewById(R.id.more_info_btn);
+            mLikeUser = (ImageView) itemView.findViewById(R.id.like_img);
+            mNumberLikes = (TextView) itemView.findViewById(R.id.number_likes_txt);
 
             mDummy = userPhoto.getContext().getResources().getDrawable(R.drawable.user_bg);
 

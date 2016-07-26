@@ -52,7 +52,7 @@
     <string name="error.invalid_login_or_password">Неверный логин или пароль!</string>
     <string name="error.not_response_from_server">Нет ответа от сервера!</string>
     <string name="error.network_not_available">Сеть на данный момент не доступна, попробуйте позже!</string>
-    <string name="error.incorrect_token">Невалидный токен!</string>
+    <string name="error.incorrect_token">Необходима авторизация!</string>
     <string name="error.user_list_not_available">Список пользователей не может быть получен</string>
     <string name="error.app_email_not_available">Приложение для работы с почтой отсутствует!</string>
     <string name="error.user_list_not_loaded">Список пользователей не может быть загружен</string>
@@ -71,4 +71,6 @@
     <string name="menu.order.code_lines">Сортировка по строкам кода</string>
 
     <string name="dev_intensive_app">Dev Intensive App</string>
+    <string name="info.data_change_in_server">Данные сохранены на сервере!</string>
+    <string name="likes.null">0</string>
 </resources>

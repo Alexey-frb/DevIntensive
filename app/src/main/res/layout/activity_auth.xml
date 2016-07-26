@@ -28,7 +28,7 @@
             android:layout_width="@dimen/login_frame_size"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="visible"
+            android:visibility="gone"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/login_frame_corner_radius"
             app:cardElevation="@dimen/login_frame_elevation">

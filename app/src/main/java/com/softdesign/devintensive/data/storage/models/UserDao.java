@@ -30,9 +30,10 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property FullName = new Property(4, String.class, "fullName", false, "FULL_NAME");
         public final static Property SearchName = new Property(5, String.class, "searchName", false, "SEARCH_NAME");
         public final static Property Rating = new Property(6, int.class, "rating", false, "RATING");
-        public final static Property CodeLines = new Property(7, int.class, "codeLines", false, "CODE_LINES");
-        public final static Property Projects = new Property(8, int.class, "projects", false, "PROJECTS");
-        public final static Property Bio = new Property(9, String.class, "bio", false, "BIO");
+        public final static Property Rait = new Property(7, int.class, "rait", false, "RAIT");
+        public final static Property CodeLines = new Property(8, int.class, "codeLines", false, "CODE_LINES");
+        public final static Property Projects = new Property(9, int.class, "projects", false, "PROJECTS");
+        public final static Property Bio = new Property(10, String.class, "bio", false, "BIO");
     }
 
     ;
@@ -62,9 +63,10 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"FULL_NAME\" TEXT NOT NULL UNIQUE ," + // 4: fullName
                 "\"SEARCH_NAME\" TEXT NOT NULL UNIQUE ," + // 5: searchName
                 "\"RATING\" INTEGER NOT NULL ," + // 6: rating
-                "\"CODE_LINES\" INTEGER NOT NULL ," + // 7: codeLines
-                "\"PROJECTS\" INTEGER NOT NULL ," + // 8: projects
-                "\"BIO\" TEXT);"); // 9: bio
+                "\"RAIT\" INTEGER NOT NULL ," + // 7: rait
+                "\"CODE_LINES\" INTEGER NOT NULL ," + // 8: codeLines
+                "\"PROJECTS\" INTEGER NOT NULL ," + // 9: projects
+                "\"BIO\" TEXT);"); // 10: bio
     }
 
     /** Drops the underlying database table. */
@@ -95,12 +97,13 @@ public class UserDao extends AbstractDao<User, Long> {
         stmt.bindString(5, entity.getFullName());
         stmt.bindString(6, entity.getSearchName());
         stmt.bindLong(7, entity.getRating());
-        stmt.bindLong(8, entity.getCodeLines());
-        stmt.bindLong(9, entity.getProjects());
+        stmt.bindLong(8, entity.getRait());
+        stmt.bindLong(9, entity.getCodeLines());
+        stmt.bindLong(10, entity.getProjects());
  
         String bio = entity.getBio();
         if (bio != null) {
-            stmt.bindString(10, bio);
+            stmt.bindString(11, bio);
         }
     }
 
@@ -126,12 +129,13 @@ public class UserDao extends AbstractDao<User, Long> {
         stmt.bindString(5, entity.getFullName());
         stmt.bindString(6, entity.getSearchName());
         stmt.bindLong(7, entity.getRating());
-        stmt.bindLong(8, entity.getCodeLines());
-        stmt.bindLong(9, entity.getProjects());
+        stmt.bindLong(8, entity.getRait());
+        stmt.bindLong(9, entity.getCodeLines());
+        stmt.bindLong(10, entity.getProjects());
  
         String bio = entity.getBio();
         if (bio != null) {
-            stmt.bindString(10, bio);
+            stmt.bindString(11, bio);
         }
     }
 
@@ -156,9 +160,10 @@ public class UserDao extends AbstractDao<User, Long> {
                 cursor.getString(offset + 4), // fullName
                 cursor.getString(offset + 5), // searchName
                 cursor.getInt(offset + 6), // rating
-                cursor.getInt(offset + 7), // codeLines
-                cursor.getInt(offset + 8), // projects
-                cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9) // bio
+                cursor.getInt(offset + 7), // rait
+                cursor.getInt(offset + 8), // codeLines
+                cursor.getInt(offset + 9), // projects
+                cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // bio
         );
         return entity;
     }
@@ -172,9 +177,10 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setFullName(cursor.getString(offset + 4));
         entity.setSearchName(cursor.getString(offset + 5));
         entity.setRating(cursor.getInt(offset + 6));
-        entity.setCodeLines(cursor.getInt(offset + 7));
-        entity.setProjects(cursor.getInt(offset + 8));
-        entity.setBio(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setRait(cursor.getInt(offset + 7));
+        entity.setCodeLines(cursor.getInt(offset + 8));
+        entity.setProjects(cursor.getInt(offset + 9));
+        entity.setBio(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
      }
     
     @Override

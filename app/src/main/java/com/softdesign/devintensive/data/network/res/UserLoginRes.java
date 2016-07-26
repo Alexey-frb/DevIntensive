@@ -3,7 +3,7 @@ package com.softdesign.devintensive.data.network.res;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserModelPostRes {
+public class UserLoginRes {
     @SerializedName("success")
     @Expose
     private boolean success;
@@ -18,7 +18,7 @@ public class UserModelPostRes {
     public class Data {
         @SerializedName("user")
         @Expose
-        private UserModelGetRes.Data user;
+        private UserDataRes.Data user;
         @SerializedName("token")
         @Expose
         private String token;
@@ -27,7 +27,7 @@ public class UserModelPostRes {
             return token;
         }
 
-        public UserModelGetRes.Data getUser() {
+        public UserDataRes.Data getUser() {
             return user;
         }
     }

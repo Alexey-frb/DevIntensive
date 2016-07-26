@@ -6,9 +6,10 @@ import android.support.annotation.Nullable;
 import com.redmadrobot.chronos.ChronosOperation;
 import com.redmadrobot.chronos.ChronosOperationResult;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.network.res.UserDataRes;
 import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelGetRes;
 import com.softdesign.devintensive.data.storage.models.DaoSession;
+import com.softdesign.devintensive.data.storage.models.Likes;
 import com.softdesign.devintensive.data.storage.models.Repository;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDao;
@@ -37,6 +38,7 @@ public class SaveUsersInDb extends ChronosOperation<List<User>> {
     @Override
     public List<User> run() {
         List<Repository> allRepositories = new ArrayList<Repository>();
+        List<Likes> allLikes = new ArrayList<Likes>();
         List<User> allUsers = new ArrayList<User>();
 
         long index = 0, number;
@@ -51,10 +53,12 @@ public class SaveUsersInDb extends ChronosOperation<List<User>> {
             }
 
             allRepositories.addAll(getRepoListFromUserRes(userRes));
+            allLikes.addAll(getLikesByFromUserRes(userRes));
             allUsers.add(new User(userRes, number));
         }
 
         mDaoSession.getRepositoryDao().insertOrReplaceInTx(allRepositories);
+        mDaoSession.getLikesDao().insertOrReplaceInTx(allLikes);
         mDaoSession.getUserDao().insertOrReplaceInTx(allUsers);
 
         return null;
@@ -64,11 +68,22 @@ public class SaveUsersInDb extends ChronosOperation<List<User>> {
         final String userId = userData.getId();
 
         List<Repository> repositories = new ArrayList<>();
-        for (UserModelGetRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
+        for (UserDataRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
             repositories.add(new Repository(repositoryRes, userId));
         }
 
         return repositories;
+    }
+
+    private List<Likes> getLikesByFromUserRes(UserListRes.UserData userData) {
+        final String userId = userData.getId();
+
+        List<Likes> likes = new ArrayList<>();
+        for (String likesByRes : userData.getProfileValues().getLikesBy()) {
+            likes.add(new Likes(likesByRes, userId));
+        }
+
+        return likes;
     }
 
     @NonNull

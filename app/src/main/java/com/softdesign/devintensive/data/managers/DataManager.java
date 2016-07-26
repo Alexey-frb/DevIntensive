@@ -6,11 +6,15 @@ import android.util.Log;
 import com.softdesign.devintensive.data.network.PicassoCache;
 import com.softdesign.devintensive.data.network.RestService;
 import com.softdesign.devintensive.data.network.ServiceGenerator;
+import com.softdesign.devintensive.data.network.req.UserContactsReq;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UploadPhotoRes;
+import com.softdesign.devintensive.data.network.res.UserContactsRes;
+import com.softdesign.devintensive.data.network.res.UserDataRes;
+import com.softdesign.devintensive.data.network.res.UserLikeRes;
 import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelGetRes;
-import com.softdesign.devintensive.data.network.res.UserModelPostRes;
+import com.softdesign.devintensive.data.network.res.UserLoginRes;
+import com.softdesign.devintensive.data.network.res.UserUnlikeRes;
 import com.softdesign.devintensive.data.storage.models.DaoSession;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDao;
@@ -69,11 +73,11 @@ public class DataManager {
     }
 
     //region --- Network ---
-    public Call<UserModelPostRes> loginUser(UserLoginReq userLoginReq) {
+    public Call<UserLoginRes> loginUser(UserLoginReq userLoginReq) {
         return mRestService.loginUser(userLoginReq);
     }
 
-    public Call<UserModelGetRes> loginToken(String userId) {
+    public Call<UserDataRes> loginToken(String userId) {
         return mRestService.loginToken(userId);
     }
 
@@ -87,6 +91,18 @@ public class DataManager {
 
     public Call<UserListRes> getUserListFromNetwork() {
         return mRestService.getUserList();
+    }
+
+    public Call<UserContactsRes> changeUserContacts(String userId, UserContactsReq userContactsReq) {
+        return mRestService.changeUserContacts(userId, userContactsReq);
+    }
+
+    public Call<UserLikeRes> likeUser(String userId) {
+        return mRestService.likeUser(userId);
+    }
+
+    public Call<UserUnlikeRes> unlikeUser(String userId) {
+        return mRestService.unlikeUser(userId);
     }
     //endregion
 
