@@ -5,10 +5,12 @@
 
     <!-- Sizes -->
     <dimen name="size_smaller_0dp">0dp</dimen>
+    <dimen name="size_smaller_4">4dp</dimen>
     <dimen name="size_small_24">24dp</dimen>
     <dimen name="size_medium_56">56dp</dimen>
     <dimen name="size_large_72">72dp</dimen>
     <dimen name="size_largest_112dp">112dp</dimen>
+    <dimen name="size_larger_172dp">172dp</dimen>
 
     <!-- Spaces -->
     <dimen name="spacing_tiny_4">4dp</dimen>
@@ -42,13 +44,11 @@
 
     <!-- Misc -->
     <dimen name="profile_image_size">256dp</dimen>
-    <dimen name="fab_right_space">8dp</dimen>
-    <dimen name="avatar_size">60dp</dimen>
+    <dimen name="avatar_image_size">60dp</dimen>
     <dimen name="placeholder_photo_size_90">90dp</dimen>
+    <dimen name="fab_right_space">8dp</dimen>
     <dimen name="login_frame_size">240dp</dimen>
     <dimen name="login_frame_corner_radius">2dp</dimen>
     <dimen name="login_frame_elevation">8dp</dimen>
-    <dimen name="size_smaller_4">4dp</dimen>
     <dimen name="login_frame_button_width">125dp</dimen>
-
 </resources>

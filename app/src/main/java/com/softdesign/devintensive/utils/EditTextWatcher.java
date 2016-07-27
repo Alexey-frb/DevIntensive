@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.widget.EditText;
 
 import com.softdesign.devintensive.R;
@@ -12,10 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Проверка ввода для текстовых полей
+ * Проверка ввода введенного текста для текстовых полей
  */
 public class EditTextWatcher implements TextWatcher {
-    private static final String phonePattern = "^\\d{11,20}$";
+
     private static final String emailPattern = "^[\\w\\.\\-]{3,}@[A-Za-z0-9\\-]{2,}\\.[A-Za-z]{2,3}$";
     private static final String vkPattern = "^vk\\.com\\/\\w{3,}$";
     private static final String gitPattern = "^github\\.com\\/.{3,}$";
@@ -32,7 +33,6 @@ public class EditTextWatcher implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
     }
 
     @Override
@@ -50,7 +50,7 @@ public class EditTextWatcher implements TextWatcher {
     public void afterTextChanged(Editable s) {
         switch (mEditText.getId()) {
             case R.id.phone_et:
-                checkInputString(phonePattern, s.toString(), mContext.getString(R.string.error_phone_et));
+                checkPhoneString(s.toString(), mContext.getString(R.string.error_phone_et));
                 break;
             case R.id.email_et:
                 checkInputString(emailPattern, s.toString(), mContext.getString(R.string.error_email_et));
@@ -76,6 +76,25 @@ public class EditTextWatcher implements TextWatcher {
         Matcher matcher = pattern.matcher(inputString);
 
         if (matcher.matches()) {
+            mTextInputLayout.setErrorEnabled(false);
+            mTextInputLayout.setError("");
+        } else {
+            mTextInputLayout.setErrorEnabled(true);
+            mTextInputLayout.setError(error);
+        }
+    }
+
+    /**
+     * Проверить введенный номер телефона на корректный ввод
+     *
+     * @param inputString - проверяемая строка
+     * @param error       - текст ошибки
+     */
+    private void checkPhoneString(String inputString, String error) {
+        Pattern pattern = Patterns.PHONE;
+        Matcher matcher = pattern.matcher(inputString);
+
+        if (matcher.matches() && inputString.length() >= 11 && inputString.length() <= 20) {
             mTextInputLayout.setErrorEnabled(false);
             mTextInputLayout.setError("");
         } else {

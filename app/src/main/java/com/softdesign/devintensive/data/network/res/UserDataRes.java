@@ -6,56 +6,54 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserModelRes {
+public class UserDataRes {
+
     @SerializedName("success")
     @Expose
-    private boolean success;
+    public boolean success;
     @SerializedName("data")
     @Expose
-    private Data data;
+    public Data data;
 
     public Data getData() {
         return data;
     }
 
-    public class User {
+    public class Data {
+
         @SerializedName("_id")
         @Expose
-        private String id;
+        public String id;
         @SerializedName("first_name")
         @Expose
-        private String firstName;
+        public String firstName;
         @SerializedName("second_name")
         @Expose
-        private String secondName;
+        public String secondName;
         @SerializedName("__v")
         @Expose
-        private int v;
+        public int v;
         @SerializedName("repositories")
         @Expose
-        private Repositories repositories;
+        public Repositories repositories;
         @SerializedName("contacts")
         @Expose
-        private Contacts contacts;
+        public Contacts contacts;
         @SerializedName("profileValues")
         @Expose
-        private ProfileValues profileValues;
+        public ProfileValues profileValues;
         @SerializedName("publicInfo")
         @Expose
-        private PublicInfo publicInfo;
+        public PublicInfo publicInfo;
         @SerializedName("specialization")
         @Expose
-        private String specialization;
+        public String specialization;
         @SerializedName("role")
         @Expose
-        private String role;
+        public String role;
         @SerializedName("updated")
         @Expose
-        private String updated;
-
-        public ProfileValues getProfileValues() {
-            return profileValues;
-        }
+        public String updated;
 
         public String getId() {
             return id;
@@ -77,19 +75,23 @@ public class UserModelRes {
             return contacts;
         }
 
+        public ProfileValues getProfileValues() {
+            return profileValues;
+        }
+
         public PublicInfo getPublicInfo() {
             return publicInfo;
         }
-
     }
 
     public class Repositories {
+
         @SerializedName("repo")
         @Expose
-        private List<Repo> repo = new ArrayList<Repo>();
+        public List<Repo> repo = new ArrayList<Repo>();
         @SerializedName("updated")
         @Expose
-        private String updated;
+        public String updated;
 
         public List<Repo> getRepo() {
             return repo;
@@ -97,64 +99,81 @@ public class UserModelRes {
     }
 
     public class Repo {
+
         @SerializedName("_id")
         @Expose
-        private String id;
+        public String id;
         @SerializedName("git")
         @Expose
-        private String git;
+        public String git;
         @SerializedName("title")
         @Expose
-        private String title;
+        public String title;
+
+        public String getId() {
+            return id;
+        }
 
         public String getGit() {
             return git;
         }
+
+        public String getTitle() {
+            return title;
+        }
     }
 
     public class PublicInfo {
+
         @SerializedName("bio")
         @Expose
-        private String bio;
+        public String bio;
         @SerializedName("avatar")
         @Expose
-        private String avatar;
+        public String avatar;
         @SerializedName("photo")
         @Expose
-        private String photo;
+        public String photo;
         @SerializedName("updated")
         @Expose
-        private String updated;
+        public String updated;
 
         public String getBio() {
             return bio;
         }
 
-        public String getPhoto() {
-            return photo;
-        }
-
         public String getAvatar() {
             return avatar;
+        }
+
+        public String getPhoto() {
+            return photo;
         }
     }
 
     public class ProfileValues {
+
         @SerializedName("homeTask")
         @Expose
-        private int homeTask;
+        public int homeTask;
         @SerializedName("projects")
         @Expose
-        private int projects;
+        public int projects;
         @SerializedName("linesCode")
         @Expose
-        private int linesCode;
+        public int linesCode;
+        @SerializedName("likesBy")
+        @Expose
+        public List<String> likesBy = new ArrayList<String>();
         @SerializedName("rait")
         @Expose
-        private int rait;
+        public int rait;
         @SerializedName("updated")
         @Expose
-        private String updated;
+        public String updated;
+        @SerializedName("rating")
+        @Expose
+        public int rating;
 
         public int getProjects() {
             return projects;
@@ -165,40 +184,35 @@ public class UserModelRes {
         }
 
         public int getRating() {
+            return rating;
+        }
+
+        public int getHomeTask() {
+            return homeTask;
+        }
+
+        public List<String> getLikesBy() {
+            return likesBy;
+        }
+
+        public int getRait() {
             return rait;
-        }
-    }
-
-    public class Data {
-        @SerializedName("user")
-        @Expose
-        private User user;
-        @SerializedName("token")
-        @Expose
-        private String token;
-
-        public String getToken() {
-            return token;
-        }
-
-        public User getUser() {
-            return user;
         }
     }
 
     public class Contacts {
         @SerializedName("vk")
         @Expose
-        private String vk;
+        public String vk;
         @SerializedName("phone")
         @Expose
-        private String phone;
+        public String phone;
         @SerializedName("email")
         @Expose
-        private String email;
+        public String email;
         @SerializedName("updated")
         @Expose
-        private String updated;
+        public String updated;
 
         public String getVk() {
             return vk;

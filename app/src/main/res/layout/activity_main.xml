@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    tools:ignore="contentDescription"
     tools:context=".ui.activities.MainActivity">
 
     <android.support.design.widget.CoordinatorLayout
@@ -40,8 +41,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/profile_image_size"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/user_photo"
-                        android:visibility="visible"/>
+                        android:src="@drawable/user_bg"
+                        android:visibility="visible"
+                        android:fitsSystemWindows="true"/>
 
                     <RelativeLayout
                         android:id="@+id/profile_placeholder"
@@ -72,14 +74,13 @@
                     </RelativeLayout>
                 </FrameLayout>
 
-
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:theme="@style/AppTheme.PopupOverlay"
-                    android:titleTextColor="@color/white"
-                    app:layout_collapseMode="pin"/>
+                    app:layout_collapseMode="pin"
+                    app:theme="@style/ToolBarStyle"/>
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
@@ -95,13 +96,13 @@
             <LinearLayout style="@style/layout_field_stats_info">
 
                 <TextView
-                    android:id="@+id/info_raiting"
+                    android:id="@+id/rating_txt"
                     style="@style/text_stats_info.value"
-                    android:text="@string/info_raiting"/>
+                    android:text="@string/user_profile.rating_txt.default_value"/>
 
                 <TextView
                     style="@style/text_stats_info.hint"
-                    android:text="@string/raiting"/>
+                    android:text="@string/user_profile.rating_txt.text"/>
             </LinearLayout>
 
             <View style="@style/line_vertical"/>
@@ -111,13 +112,13 @@
                 android:layout_weight="2">
 
                 <TextView
-                    android:id="@+id/info_rows_code"
+                    android:id="@+id/code_lines_txt"
                     style="@style/text_stats_info.value"
-                    android:text="@string/info_rows_code"/>
+                    android:text="@string/user_profile.code_lines_txt.default_value"/>
 
                 <TextView
                     style="@style/text_stats_info.hint"
-                    android:text="@string/rows_code"/>
+                    android:text="@string/user_profile.code_lines_txt.text"/>
             </LinearLayout>
 
             <View style="@style/line_vertical"/>
@@ -125,13 +126,13 @@
             <LinearLayout style="@style/layout_field_stats_info">
 
                 <TextView
-                    android:id="@+id/info_project"
+                    android:id="@+id/projects_txt"
                     style="@style/text_stats_info.value"
-                    android:text="@string/info_project"/>
+                    android:text="@string/user_profile.projects_txt.default_value"/>
 
                 <TextView
                     style="@style/text_stats_info.hint"
-                    android:text="@string/project"/>
+                    android:text="@string/user_profile.projects_txt.text"/>
             </LinearLayout>
         </LinearLayout>
 

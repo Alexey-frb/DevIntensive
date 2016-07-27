@@ -1,4 +1,4 @@
-package com.softdesign.devintensive.utils;
+package com.softdesign.devintensive.ui.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,8 +16,9 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Используется для скругления фото для аватара
+ * Кастомная view для скругления фото для аватара
  */
+@Deprecated
 public class CircleImageView extends ImageView {
 
     public CircleImageView(Context context) {
@@ -118,6 +119,7 @@ public class CircleImageView extends ImageView {
             invalidateSelf();
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void setDither(boolean dither) {
             mPaint.setDither(dither);
@@ -127,6 +129,5 @@ public class CircleImageView extends ImageView {
         public Bitmap getBitmap() {
             return mBitmap;
         }
-        // TODO allow set and use target density, mutate, constant state, changing configurations, etc.
     }
 }

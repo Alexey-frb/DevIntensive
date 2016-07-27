@@ -1,61 +1,124 @@
 package com.softdesign.devintensive.ui.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
-import com.softdesign.devintensive.data.network.res.UserListRes;
+import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.ui.views.AspectRatioImageView;
-import com.squareup.picasso.Picasso;
+import com.softdesign.devintensive.utils.ConstantManager;
+import com.softdesign.devintensive.utils.helper.ItemTouchHelperAdapter;
+import com.softdesign.devintensive.utils.helper.ItemTouchHelperViewHolder;
+import com.softdesign.devintensive.utils.helper.OnStartDragListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 
+import java.util.Collections;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements ItemTouchHelperAdapter {
 
+    private static final String TAG = ConstantManager.TAG_PREFIX + "UsersAdapter";
+    private final OnStartDragListener mDragStartListener;
     private Context mContext;
-    private List<UserListRes.UserData> mUsers;
+    private List<User> mUsers;
     private UserViewHolder.CustomClickListener mCustomClickListener;
 
-    public UserAdapter(List<UserListRes.UserData> users, UserViewHolder.CustomClickListener customClickListener) {
+    public UserAdapter(List<User> users, UserViewHolder.CustomClickListener customClickListener, OnStartDragListener dragStartListener) {
         mUsers = users;
         mCustomClickListener = customClickListener;
+        mDragStartListener = dragStartListener;
     }
 
     @Override
     public UserAdapter.UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_list, parent, false);
+
         return new UserViewHolder(convertView, mCustomClickListener);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void onBindViewHolder(UserAdapter.UserViewHolder holder, int position) {
-        // TODO: 15.07.2016 Реализовать Bind
-        UserListRes.UserData user = mUsers.get(position);
-        Picasso.with(mContext)
-                .load(user.getPublicInfo().getPhoto())
-                .placeholder(mContext.getResources().getDrawable(R.drawable.user_bg))
-                .error(mContext.getResources().getDrawable(R.drawable.user_bg))
-                .resize(mContext.getResources().getDimensionPixelSize(R.dimen.profile_image_size), mContext.getResources().getDimensionPixelSize(R.dimen.profile_image_size))
-                .centerInside()
-                .into(holder.userPhoto);
+    public void onBindViewHolder(final UserAdapter.UserViewHolder holder, int position) {
+        final User user = mUsers.get(position);
+        final String userPhoto;
+        int numberLikes;
 
+        if (user.getPhoto().isEmpty()) {
+            userPhoto = "null";
+            Log.e(TAG, "onBindViewHolder: user with name " + user.getFullName() + " has empty name");
+        } else {
+            userPhoto = user.getPhoto();
+        }
+
+        // Загрузка фото пользователя
+        DataManager.getInstance().getPicasso()
+                .load(userPhoto)
+                .placeholder(holder.mDummy)
+                .error(holder.mDummy)
+                .fit()
+                .centerCrop()
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(holder.userPhoto, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "load photo from cache");
+                    }
+
+                    @Override
+                    public void onError() {
+                        DataManager.getInstance().getPicasso()
+                                .load(userPhoto)
+                                .placeholder(holder.mDummy)
+                                .error(holder.mDummy)
+                                .fit()
+                                .centerCrop()
+                                .into(holder.userPhoto, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.d(TAG, "load photo from network");
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        Log.d(TAG, "Could not fetch image");
+                                    }
+                                });
+                    }
+                });
+
+        // Отображение информации о пользователе
         holder.mFullName.setText(user.getFullName());
-        holder.mRating.setText(String.valueOf(user.getProfileValues().getRating()));
-        holder.mCodeLines.setText(String.valueOf(user.getProfileValues().getLinesCode()));
-        holder.mProjects.setText(String.valueOf(user.getProfileValues().getProjects()));
+        holder.mRating.setText(String.valueOf(user.getRating()));
+        holder.mCodeLines.setText(String.valueOf(user.getCodeLines()));
+        holder.mProjects.setText(String.valueOf(user.getProjects()));
 
-        if (user.getPublicInfo().getBio() == null || user.getPublicInfo().getBio().isEmpty()) {
+        // Отображение информации о себе пользователя
+        if (user.getBio() == null || user.getBio().isEmpty()) {
             holder.mBio.setVisibility(View.GONE);
         } else {
             holder.mBio.setVisibility(View.VISIBLE);
-            holder.mBio.setText(user.getPublicInfo().getBio());
+            holder.mBio.setText(user.getBio());
+        }
+        // Отображение лайков пользователя
+        numberLikes = user.getRating() - user.getRait();
+        if (numberLikes > 0) {
+            holder.mLikeUser.setImageResource(R.drawable.ic_favorite);
+            holder.mNumberLikes.setText(String.valueOf(numberLikes));
+        } else {
+            holder.mLikeUser.setImageResource(R.drawable.ic_favorite_gray);
+            holder.mNumberLikes.setText("");
         }
     }
 
@@ -64,13 +127,41 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return mUsers.size();
     }
 
-    public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        User user1 = mUsers.get(fromPosition);
+        User user2 = mUsers.get(toPosition);
+        long tmpSortId = user1.getSortId();
+        user1.setSortId(user2.getSortId());
+        user2.setSortId(tmpSortId);
+        user1.update();
+        user2.update();
+
+        Collections.swap(mUsers, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        mUsers.get(position).delete();
+
+        mUsers.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ItemTouchHelperViewHolder {
         protected AspectRatioImageView userPhoto;
         protected TextView mFullName, mRating, mCodeLines, mProjects, mBio;
         protected Button mShowMore;
+        protected Drawable mDummy;
+        protected ImageView mLikeUser;
+        protected TextView mNumberLikes;
 
         private CustomClickListener mListener;
 
+        @SuppressWarnings("deprecation")
         public UserViewHolder(View itemView, CustomClickListener customClickListener) {
             super(itemView);
             mListener = customClickListener;
@@ -82,6 +173,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             mProjects = (TextView) itemView.findViewById(R.id.projects_txt);
             mBio = (TextView) itemView.findViewById(R.id.bio_txt);
             mShowMore = (Button) itemView.findViewById(R.id.more_info_btn);
+            mLikeUser = (ImageView) itemView.findViewById(R.id.like_img);
+            mNumberLikes = (TextView) itemView.findViewById(R.id.number_likes_txt);
+
+            mDummy = userPhoto.getContext().getResources().getDrawable(R.drawable.user_bg);
 
             mShowMore.setOnClickListener(this);
         }
@@ -91,6 +186,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             if (mListener != null) {
                 mListener.onUserItemClickListener(getAdapterPosition());
             }
+        }
+
+        @Override
+        public void onItemSelected() {
+            itemView.setBackgroundColor(Color.LTGRAY);
+        }
+
+        @Override
+        public void onItemClear() {
+            itemView.setBackgroundColor(0);
         }
 
         public interface CustomClickListener {

@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.activities.MainActivity">
+    tools:ignore="contentDescription"
+    tools:context=".ui.activities.UserListActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_coordinator_container"
@@ -28,7 +29,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/AppTheme.PopupOverlay"
                 app:layout_collapseMode="pin"
-                app:theme="@style/ToolBarStyle"/>
+                app:theme="@style/ToolBarStyle"
+                app:titleTextColor="@color/white"/>
         </android.support.design.widget.AppBarLayout>
 
         <include layout="@layout/user_list_content"/>
@@ -41,5 +43,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="left"
         app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/drawer_menu"></android.support.design.widget.NavigationView>
+        app:menu="@menu/drawer_menu">
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_large_72">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size_large_72"
+    tools:ignore="contentDescription">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -12,9 +15,9 @@
         <EditText
             android:id="@+id/git_et"
             style="@style/text_user_info"
-            android:hint="@string/git_hint"
+            android:hint="@string/user_profile.git_et.hint"
             android:inputType="textUri|textMultiLine"
-            android:text="@string/git_default_value"/>
+            android:text="@string/user_profile.git_et.default_value"/>
     </android.support.design.widget.TextInputLayout>
 
     <ImageView

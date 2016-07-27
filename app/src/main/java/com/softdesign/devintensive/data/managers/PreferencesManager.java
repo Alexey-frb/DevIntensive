@@ -18,31 +18,34 @@ public class PreferencesManager {
     private static final String[] USER_DATA = {
             ConstantManager.FIRST_NAME,
             ConstantManager.SECOND_NAME};
-
-    private static final String[] USER_FIELDS = {
+    private static final String[] USER_INFO = {
             ConstantManager.USER_PHONE_KEY,
             ConstantManager.USER_MAIL_KEY,
             ConstantManager.USER_VK_KEY,
             ConstantManager.USER_GIT_KEY,
             ConstantManager.USER_BIO_KEY};
-    private static final int[] USER_FIELDS_VALUES = {
-            R.string.phone_default_value,
-            R.string.email_default_value,
-            R.string.vk_default_value,
-            R.string.git_default_value,
-            R.string.info_default_value};
-    private static final String[] USER_VALUES = {
+    private static final String[] USER_PROFILE = {
             ConstantManager.USER_RATING_VALUE,
             ConstantManager.USER_CODE_LINES_VALUE,
             ConstantManager.USER_PROJECT_VALUE};
-
+    private static final int[] USER_INFO_DEFAULT_VALUES = {
+            R.string.user_profile_phone_et_default_value,
+            R.string.user_profile_email_et_default_value,
+            R.string.user_profile_vk_et_default_value,
+            R.string.user_profile_git_et_default_value,
+            R.string.user_profile_bio_et_default_value};
     private SharedPreferences mSharedPreferences;
 
     public PreferencesManager() {
         this.mSharedPreferences = DevIntensiveApplication.getSharedPreferences();
     }
 
-    public void saveUserData(List<String> userData) {
+    /**
+     * Сохранить пользовательское имя в shared preferences
+     *
+     * @param userData
+     */
+    public void saveUserFullName(List<String> userData) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
         for (int i = 0; i < USER_DATA.length; i++) {
@@ -52,15 +55,25 @@ public class PreferencesManager {
     }
 
     /**
+     * Восстановить пользовательское имя из shared preferences
+     *
+     * @return
+     */
+    public String getFullName() {
+        return mSharedPreferences.getString(ConstantManager.SECOND_NAME, "null") + " " +
+                mSharedPreferences.getString(ConstantManager.FIRST_NAME, "null");
+    }
+
+    /**
      * Сохранить пользовательские данные в shared preferences
      *
-     * @param userFields
+     * @param userInfo
      */
-    public void saveUserProfileData(List<String> userFields) {
+    public void saveUserInfoData(List<String> userInfo) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
-        for (int i = 0; i < USER_FIELDS.length; i++) {
-            editor.putString(USER_FIELDS[i], userFields.get(i));
+        for (int i = 0; i < USER_INFO.length; i++) {
+            editor.putString(USER_INFO[i], userInfo.get(i));
         }
         editor.apply();
     }
@@ -70,13 +83,40 @@ public class PreferencesManager {
      *
      * @return
      */
-    public List<String> loadUserProfileData() {
-        List<String> userFields = new ArrayList<>();
-        for (int i = 0; i < USER_FIELDS.length; i++) {
-            userFields.add(mSharedPreferences.getString(USER_FIELDS[i],
-                    DevIntensiveApplication.getContext().getString(USER_FIELDS_VALUES[i])));
+    public List<String> loadUserInfoData() {
+        List<String> userInfo = new ArrayList<>();
+        for (int i = 0; i < USER_INFO.length; i++) {
+            userInfo.add(mSharedPreferences.getString(USER_INFO[i],
+                    DevIntensiveApplication.getContext().getString(USER_INFO_DEFAULT_VALUES[i])));
         }
-        return userFields;
+        return userInfo;
+    }
+
+    /**
+     * Сохранить данные профиля в shared preferences
+     *
+     * @param userProfile
+     */
+    public void saveUserProfileData(int[] userProfile) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        for (int i = 0; i < USER_PROFILE.length; i++) {
+            editor.putString(USER_PROFILE[i], String.valueOf(userProfile[i]));
+        }
+        editor.apply();
+    }
+
+    /**
+     * Восстановить данные профиля из shared preferences
+     *
+     * @return
+     */
+    public List<String> loadUserProfileData() {
+        List<String> userProfile = new ArrayList<>();
+        for (int i = 0; i < USER_PROFILE.length; i++) {
+            userProfile.add(mSharedPreferences.getString(USER_PROFILE[i], "0"));
+        }
+        return userProfile;
     }
 
     /**
@@ -100,7 +140,7 @@ public class PreferencesManager {
     }
 
     /**
-     * Сохранить пользовательское фото в shared preferences
+     * Сохранить пользовательский аватар в shared preferences
      *
      * @param uri
      */
@@ -111,7 +151,7 @@ public class PreferencesManager {
     }
 
     /**
-     * Загрузить пользовательское фото из shared preferences
+     * Загрузить пользовательский аватар из shared preferences
      *
      * @return
      */
@@ -119,45 +159,74 @@ public class PreferencesManager {
         return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_AVATAR_KEY, "android.resource://com.softdesign.devintensive/drawable/ic_account"));
     }
 
-    public void saveUserProfileValues(int[] userValues) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-
-        for (int i = 0; i < USER_VALUES.length; i++) {
-            editor.putString(USER_VALUES[i], String.valueOf(userValues[i]));
-        }
-        editor.apply();
-    }
-
-    public List<String> loadUserProfileValues() {
-        List<String> userValues = new ArrayList<>();
-        for (int i = 0; i < USER_VALUES.length; i++) {
-            userValues.add(mSharedPreferences.getString(USER_VALUES[i], "0"));
-        }
-        return userValues;
-    }
-
+    /**
+     * Сохранить токен авторизации в shared preferences
+     *
+     * @param authToken
+     */
     public void saveAuthToken(String authToken) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.AUTH_TOKEN_KEY, authToken);
         editor.apply();
     }
 
+    /**
+     * Получить токен авторизации из shared preferences
+     *
+     * @return
+     */
     public String getAuthToken() {
         return mSharedPreferences.getString(ConstantManager.AUTH_TOKEN_KEY, "null");
     }
 
+    /**
+     * Сохранить идентификатор пользователя в shared preferences
+     *
+     * @param userId
+     */
     public void saveUserId(String userId) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.USER_ID_KEY, userId);
         editor.apply();
     }
 
+    /**
+     * Получить идентификатор пользователя из shared preferences
+     *
+     * @return
+     */
     public String getUserId() {
         return mSharedPreferences.getString(ConstantManager.USER_ID_KEY, "null");
     }
 
-    public String getUserName() {
-        return mSharedPreferences.getString(ConstantManager.SECOND_NAME, "null") + " " +
-                mSharedPreferences.getString(ConstantManager.FIRST_NAME, "null");
+    /**
+     * Сохранить текущую сортировку БД в shared preferences
+     *
+     * @param orderProperty  - свойство сортировки (поле сортировки)
+     * @param orderAscOrDesc - тип сортировки (по возрастанию, по убыванию)
+     */
+    public void saveOrderDb(String orderProperty, String orderAscOrDesc) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.ORDER_PROPERTY, orderProperty);
+        editor.putString(ConstantManager.ORDER_ASC_OR_DESC, orderAscOrDesc);
+        editor.apply();
+    }
+
+    /**
+     * Возвращает свойство сортировки (поле сортировки) из shared preferences
+     *
+     * @return - свойство сортировки
+     */
+    public String getOrderProperty() {
+        return mSharedPreferences.getString(ConstantManager.ORDER_PROPERTY, "manual");
+    }
+
+    /**
+     * Возвращает тип сортировки (по возрастанию, по убыванию) из shared preferences
+     *
+     * @return - тип сортировки
+     */
+    public String getOrderAscOrDesc() {
+        return mSharedPreferences.getString(ConstantManager.ORDER_ASC_OR_DESC, " ASC");
     }
 }

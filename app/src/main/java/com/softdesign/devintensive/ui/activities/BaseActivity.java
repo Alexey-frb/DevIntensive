@@ -15,6 +15,7 @@ import com.softdesign.devintensive.utils.ConstantManager;
  * Базовый класс для других классов
  */
 public class BaseActivity extends AppCompatActivity {
+
     static final String TAG = ConstantManager.TAG_PREFIX + "BaseActivity";
 
     protected ProgressDialog mProgressDialog;
